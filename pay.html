@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento PIX - KTech Eletrônicos e Importados</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://ktecheletronicos.github.io/ktechfiles/logo_k.png">
+    <link rel="shortcut icon" type="image/png" href="https://ktecheletronicos.github.io/ktechfiles/logo_k.png">
+    
+    <!-- Meta tags para WhatsApp e redes sociais -->
+    <meta property="og:title" content="KTech Eletrônicos e Importados">
+    <meta property="og:description" content="Pagamento seguro via PIX - KTech Eletrônicos e Importados">
+    <meta property="og:image" content="https://ktecheletronicos.github.io/ktechfiles/logo_ktech_eletronicos_compra_segura.png">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="KTech Eletrônicos">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="KTech Eletrônicos e Importados">
+    <meta name="twitter:description" content="Pagamento seguro via PIX - KTech Eletrônicos e Importados">
+    <meta name="twitter:image" content="https://ktecheletronicos.github.io/ktechfiles/logo_ktech_eletronicos_compra_segura.png">
+    
+    <meta name="description" content="Realize seu pagamento de forma segura via PIX na KTech Eletrônicos e Importados">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+
+        .store-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .payment-info {
+            display: none;
+        }
+
+        .payment-info.active {
+            display: block;
+        }
+
+        .info-item {
+            margin-bottom: 20px;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .amount {
+            font-size: 32px;
+            color: #667eea;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .qrcode-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .qrcode-container img {
+            max-width: 300px;
+            width: 100%;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .copy-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .copy-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .copy-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 12px;
+            word-break: break-all;
+            background: white;
+        }
+
+        .btn-copy {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn-copy:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-copy:active {
+            transform: translateY(0);
+        }
+
+        .btn-copy.copied {
+            background: #28a745;
+        }
+
+        .timer {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 10px;
+        }
+
+        .timer-label {
+            font-size: 14px;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        .timer-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #856404;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 1s linear;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .expired {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .expired h2 {
+            color: #dc3545;
+            margin-bottom: 10px;
+        }
+
+        .success {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .success.active {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .success h2 {
+            color: #28a745;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .success-message {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn-whatsapp {
+            display: inline-block;
+            padding: 15px 30px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+        }
+
+        .checking-status {
+            text-align: center;
+            padding: 10px;
+            background: #d1ecf1;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #0c5460;
+        }
+
+        .footer-info {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .footer-info strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-logo">
+                <img src="https://ktecheletronicos.github.io/ktechfiles/logo_k.png" alt="KTech Logo">
+            </div>
+            <h1>🔐 Pagamento PIX</h1>
+            <p>Pagamento seguro via PIX</p>
+            <div class="store-name">KTech Eletrônicos e Importados</div>
+        </div>
+
+        <div class="content">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Gerando código de pagamento...</p>
+            </div>
+
+            <div class="payment-info" id="paymentInfo">
+                <div class="info-item">
+                    <div class="info-label">Descrição</div>
+                    <div class="info-value" id="description"></div>
+                </div>
+
+                <div class="amount" id="amount"></div>
+
+                <div class="timer" id="timer">
+                    <div class="timer-label">⏱️ Tempo restante</div>
+                    <div class="timer-value" id="timerValue">29:50</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <div class="checking-status" id="checkingStatus">
+                    🔍 Verificando pagamento automaticamente...
+                </div>
+
+                <div class="qrcode-container">
+                    <img id="qrcodeImage" src="" alt="QR Code PIX">
+                </div>
+
+                <div class="copy-section">
+                    <div class="copy-label">📋 Código PIX Copia e Cola</div>
+                    <textarea class="copy-input" id="pixCode" readonly></textarea>
+                    <button class="btn-copy" id="btnCopy" onclick="copyCode()">
+                        Copiar Código PIX
+                    </button>
+                </div>
+            </div>
+
+            <div class="success" id="success">
+                <div class="success-icon">✅</div>
+                <h2>Pagamento Confirmado!</h2>
+                <div class="success-message">
+                    Olá, <strong id="payerName"></strong>!<br><br>
+                    Seu pagamento foi confirmado com sucesso! 🎉<br><br>
+                    Por favor, envie o comprovante de pagamento no WhatsApp da loja para finalizarmos seu pedido.
+                </div>
+                <a href="https://wa.me/5586988519865?text=Olá!%20Acabei%20de%20realizar%20o%20pagamento%20via%20PIX.%20Segue%20o%20comprovante:" class="btn-whatsapp" target="_blank">
+                    📱 Enviar Comprovante no WhatsApp
+                </a>
+            </div>
+
+            <div class="expired" id="expired" style="display: none;">
+                <h2>⏰ Tempo Expirado</h2>
+                <p>O código de pagamento expirou. Por favor, atualize a página.</p>
+            </div>
+
+            <div class="error" id="error" style="display: none;"></div>
+        </div>
+
+        <div class="footer-info">
+            <strong>KTech Eletrônicos e Importados</strong><br>
+            Pagamento 100% seguro e verificado automaticamente
+        </div>
+    </div>
+
+    <script>
+        let countdownInterval;
+        let checkPaymentInterval;
+        const totalSeconds = 29 * 60 + 50;
+        let remainingSeconds = totalSeconds;
+        let transactionId = null;
+
+        function getUrlParameter() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const idFromQuery = urlParams.get('id');
+            
+            if (idFromQuery) {
+                return idFromQuery;
+            }
+            
+            const path = window.location.pathname;
+            const segments = path.split('/').filter(s => s);
+            return segments[segments.length - 1] || null;
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function startCountdown() {
+            const timerElement = document.getElementById('timerValue');
+            const progressElement = document.getElementById('progressFill');
+
+            countdownInterval = setInterval(() => {
+                remainingSeconds--;
+                
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    clearInterval(checkPaymentInterval);
+                    showExpired();
+                    return;
+                }
+
+                timerElement.textContent = formatTime(remainingSeconds);
+                const progress = (remainingSeconds / totalSeconds) * 100;
+                progressElement.style.width = progress + '%';
+
+                if (remainingSeconds === 120) {
+                    document.getElementById('timer').style.background = '#f8d7da';
+                    document.querySelector('.timer-label').style.color = '#721c24';
+                    document.querySelector('.timer-value').style.color = '#721c24';
+                }
+            }, 1000);
+        }
+
+        function showExpired() {
+            document.getElementById('paymentInfo').style.display = 'none';
+            document.getElementById('expired').style.display = 'block';
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('error');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showSuccess(payerName) {
+            clearInterval(countdownInterval);
+            clearInterval(checkPaymentInterval);
+            
+            document.getElementById('paymentInfo').style.display = 'none';
+            
+            document.getElementById('payerName').textContent = payerName;
+            document.getElementById('success').classList.add('active');
+        }
+
+        async function checkPaymentStatus() {
+            if (!transactionId) return;
+
+            try {
+                const response = await fetch(
+                    `https://webhookn8n.ktecheletronicos.com.br/webhook/consultar_pag_depix?id=${transactionId}`
+                );
+
+                if (!response.ok) {
+                    console.error('Erro ao consultar status do pagamento');
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.response && data.response.status === 'depix_sent') {
+                    showSuccess(data.response.payerName);
+                }
+
+            } catch (error) {
+                console.error('Erro ao verificar pagamento:', error);
+            }
+        }
+
+        function startPaymentCheck() {
+            checkPaymentStatus();
+            checkPaymentInterval = setInterval(checkPaymentStatus, 30000);
+        }
+
+        function copyCode() {
+            const pixCode = document.getElementById('pixCode');
+            const btnCopy = document.getElementById('btnCopy');
+            
+            pixCode.select();
+            pixCode.setSelectionRange(0, 99999);
+            
+            navigator.clipboard.writeText(pixCode.value).then(() => {
+                btnCopy.textContent = '✓ Código Copiado!';
+                btnCopy.classList.add('copied');
+                
+                setTimeout(() => {
+                    btnCopy.textContent = 'Copiar Código PIX';
+                    btnCopy.classList.remove('copied');
+                }, 3000);
+            });
+        }
+
+        async function loadPayment() {
+            const idLink = getUrlParameter();
+            
+            if (!idLink) {
+                showError('❌ Nenhum ID de pagamento fornecido na URL');
+                return;
+            }
+
+            try {
+                const consultaResponse = await fetch(
+                    `https://webhookn8n.ktecheletronicos.com.br/webhook/consulta_link_depix?id_link=${idLink}`
+                );
+
+                if (!consultaResponse.ok) {
+                    throw new Error('Erro ao consultar dados do pagamento');
+                }
+
+                const consultaData = await consultaResponse.json();
+
+                if (!consultaData.isActive) {
+                    showError('❌ Este link de pagamento não está mais ativo');
+                    return;
+                }
+
+                const gerarResponse = await fetch(
+                    'https://webhookn8n.ktecheletronicos.com.br/webhook/gerar_vialink_depix',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(consultaData)
+                    }
+                );
+
+                if (!gerarResponse.ok) {
+                    throw new Error('Erro ao gerar código de pagamento');
+                }
+
+                const paymentData = await gerarResponse.json();
+
+                transactionId = paymentData.id_transacao;
+
+                document.getElementById('description').textContent = consultaData.description || 'Pagamento PIX';
+                document.getElementById('amount').textContent = `R$ ${consultaData.amount.toFixed(2).replace('.', ',')}`;
+                document.getElementById('qrcodeImage').src = paymentData.url_qrcode;
+                document.getElementById('pixCode').value = paymentData.copia_cola;
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('paymentInfo').classList.add('active');
+
+                startCountdown();
+                startPaymentCheck();
+
+            } catch (error) {
+                console.error('Erro:', error);
+                showError('❌ Erro ao carregar dados do pagamento. Tente novamente.');
+            }
+        }
+
+        window.addEventListener('load', loadPayment);
+    </script>
+</body>
+</html>
