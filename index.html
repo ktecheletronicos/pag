@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagamento PIX - KTech Eletrônicos e Importados</title>
+    <title>Pagamento PIX - KTech Eletrônicos e Importados!</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://ktecheletronicos.github.io/ktechfiles/logo_k.png">
@@ -410,7 +410,7 @@
         let countdownInterval;
         let checkPaymentInterval;
         const totalSeconds = 29 * 60 + 50;
-        let remainingSeconds = totalSeconds;
+        let startTime = null;
         let transactionId = null;
 
         function getUrlParameter() {
@@ -433,11 +433,13 @@
         }
 
         function startCountdown() {
+            startTime = Date.now();
             const timerElement = document.getElementById('timerValue');
             const progressElement = document.getElementById('progressFill');
 
             countdownInterval = setInterval(() => {
-                remainingSeconds--;
+                const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+                const remainingSeconds = totalSeconds - elapsedSeconds;
                 
                 if (remainingSeconds <= 0) {
                     clearInterval(countdownInterval);
