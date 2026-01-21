@@ -23,8 +23,8 @@
     
     <meta name="description" content="Realize seu pagamento de forma segura via PIX na KTech Eletrônicos e Importados">
     
-    <!-- hCaptcha Script -->
-    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <!-- Cloudflare Turnstile Script -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     
     <style>
         * {
@@ -465,7 +465,7 @@
                 </div>
 
                 <div class="captcha-wrapper">
-                    <div class="h-captcha" data-sitekey="50b2fe65-b00b-4b9d-ad62-3ba471098be2"></div>
+                    <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-callback="onTurnstileSuccess"></div>
                 </div>
                 <div class="captcha-error" id="captchaError">
                     ❌ Por favor, complete a verificação de segurança.
@@ -542,6 +542,13 @@
         const totalSeconds = 29 * 60 + 50;
         let startTime = null;
         let transactionId = null;
+        let turnstileToken = null;
+
+        // Callback do Turnstile
+        function onTurnstileSuccess(token) {
+            turnstileToken = token;
+            document.getElementById('captchaError').classList.remove('active');
+        }
 
         const amountInput = document.getElementById('amountInput');
         
