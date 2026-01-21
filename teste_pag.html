@@ -465,7 +465,7 @@
                 </div>
 
                 <div class="captcha-wrapper">
-                    <div class="cf-turnstile" data-sitekey="1x00000000000000000000AA" data-callback="onTurnstileSuccess"></div>
+                    <div class="cf-turnstile" data-sitekey="1x00000000000000000000BB" data-callback="onTurnstileSuccess"></div>
                 </div>
                 <div class="captcha-error" id="captchaError">
                     ❌ Por favor, complete a verificação de segurança.
@@ -546,6 +546,7 @@
 
         // Callback do Turnstile
         function onTurnstileSuccess(token) {
+            console.log('Turnstile validado! Token:', token);
             turnstileToken = token;
             document.getElementById('captchaError').classList.remove('active');
         }
