@@ -510,8 +510,7 @@
     <script>
         let countdownInterval;
         let checkPaymentInterval;
-        const totalSeconds = 29 * 60 + 50;
-        let startTime = null;
+        let expirationTime = null;
         let transactionId = null;
 
         const amountInput = document.getElementById('amountInput');
@@ -561,14 +560,35 @@
             return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        function startCountdown() {
-            startTime = Date.now();
+        function startCountdown(expiresAt) {
+            // O expiresAt vem em UTC (formato ISO)
+            // Convertemos para timestamp UTC
+            const expirationDate = new Date(expiresAt);
+            expirationTime = expirationDate.getTime();
+            
             const timerElement = document.getElementById('timerValue');
             const progressElement = document.getElementById('progressFill');
+            
+            // Calcula o tempo total em segundos usando Date.now() que também é UTC
+            const now = Date.now();
+            const totalSeconds = Math.floor((expirationTime - now) / 1000);
+
+            // Debug - remover depois
+            console.log('ExpiresAt:', expiresAt);
+            console.log('Expiration timestamp:', expirationTime);
+            console.log('Current timestamp:', now);
+            console.log('Total seconds:', totalSeconds);
+
+            // Verifica se o tempo já expirou antes de começar
+            if (totalSeconds <= 0) {
+                showExpired();
+                return;
+            }
 
             countdownInterval = setInterval(() => {
-                const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-                const remainingSeconds = totalSeconds - elapsedSeconds;
+                const now = Date.now();
+                const remainingMilliseconds = expirationTime - now;
+                const remainingSeconds = Math.floor(remainingMilliseconds / 1000);
                 
                 if (remainingSeconds <= 0) {
                     clearInterval(countdownInterval);
@@ -581,7 +601,8 @@
                 const progress = (remainingSeconds / totalSeconds) * 100;
                 progressElement.style.width = progress + '%';
 
-                if (remainingSeconds === 120) {
+                // Muda a cor do timer quando faltam 2 minutos
+                if (remainingSeconds <= 120 && remainingSeconds > 119) {
                     document.getElementById('timer').style.background = '#f8d7da';
                     document.querySelector('.timer-label').style.color = '#721c24';
                     document.querySelector('.timer-value').style.color = '#721c24';
@@ -703,6 +724,11 @@
 
                 const paymentData = await response.json();
 
+                // Validação dos dados recebidos
+                if (!paymentData.id_transacao || !paymentData.expiresAt) {
+                    throw new Error('Dados de pagamento incompletos');
+                }
+
                 transactionId = paymentData.id_transacao;
 
                 document.getElementById('amount').textContent = `R$ ${amount.toFixed(2).replace('.', ',')}`;
@@ -712,7 +738,8 @@
                 document.getElementById('loading').classList.remove('active');
                 document.getElementById('paymentInfo').classList.add('active');
 
-                startCountdown();
+                // Inicia o countdown usando o expiresAt do webhook
+                startCountdown(paymentData.expiresAt);
                 startPaymentCheck();
 
             } catch (error) {
@@ -723,4 +750,3 @@
     </script>
 </body>
 </html>
-
