@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagamento PIX - KTech Eletrônicos e Importados!</title>
+    <title>Pagamento PIX - KTech Eletrônicos e Importados!.</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://ktecheletronicos.github.io/ktechfiles/logo_k.png">
@@ -409,8 +409,7 @@
     <script>
         let countdownInterval;
         let checkPaymentInterval;
-        const totalSeconds = 29 * 60 + 50;
-        let startTime = null;
+        let expirationTime = null;
         let transactionId = null;
 
         function getUrlParameter() {
@@ -432,14 +431,25 @@
             return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        function startCountdown() {
-            startTime = Date.now();
+        function startCountdown(expiresAt) {
+            const expirationDate = new Date(expiresAt);
+            expirationTime = expirationDate.getTime();
+            
             const timerElement = document.getElementById('timerValue');
             const progressElement = document.getElementById('progressFill');
+            
+            const now = Date.now();
+            const totalSeconds = Math.floor((expirationTime - now) / 1000);
+
+            if (totalSeconds <= 0) {
+                showExpired();
+                return;
+            }
 
             countdownInterval = setInterval(() => {
-                const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-                const remainingSeconds = totalSeconds - elapsedSeconds;
+                const now = Date.now();
+                const remainingMilliseconds = expirationTime - now;
+                const remainingSeconds = Math.floor(remainingMilliseconds / 1000);
                 
                 if (remainingSeconds <= 0) {
                     clearInterval(countdownInterval);
@@ -452,7 +462,7 @@
                 const progress = (remainingSeconds / totalSeconds) * 100;
                 progressElement.style.width = progress + '%';
 
-                if (remainingSeconds === 120) {
+                if (remainingSeconds <= 120 && remainingSeconds > 119) {
                     document.getElementById('timer').style.background = '#f8d7da';
                     document.querySelector('.timer-label').style.color = '#721c24';
                     document.querySelector('.timer-value').style.color = '#721c24';
@@ -580,7 +590,7 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('paymentInfo').classList.add('active');
 
-                startCountdown();
+                startCountdown(paymentData.expiresAt);
                 startPaymentCheck();
 
             } catch (error) {
