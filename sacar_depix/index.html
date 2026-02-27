@@ -213,7 +213,7 @@ function iniciarConsulta(id) {
       statusDiv.innerHTML =
         `🔄 Status atual: <b>${r.status}</b>`;
 
-      if (r.status === "depix_sent") {
+      if (r.status === "sent") {
 
         clearInterval(intervaloConsulta);
         clearTimeout(timeoutMaximo);
