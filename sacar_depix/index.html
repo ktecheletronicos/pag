@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Saque DePIX</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f4f4f4;
+  padding: 30px;
+}
+
+.container {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #0a7cff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+button:disabled {
+  background: gray;
+}
+
+.resultado {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.copy-btn {
+  margin-top: 5px;
+  background: #28a745;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>💸 Solicitar Saque DePIX</h2>
+
+<label>👤 Senha</label>
+<input type="password" id="senha">
+
+<label>💰 Valor do saque (R$)</label>
+<input type="number" id="valor" step="0.01">
+
+<label>🔑 Chave Pix</label>
+<input type="text" id="pixKey">
+
+<label>📌 Tipo da Chave</label>
+<select id="tipoChave">
+  <option value="CPF">CPF</option>
+  <option value="CNPJ">CNPJ</option>
+  <option value="EMAIL">E-mail</option>
+  <option value="TELEFONE">Telefone</option>
+  <option value="ALEATORIA">Chave Aleatória</option>
+</select>
+
+<button id="btnEnviar" onclick="enviar()">Solicitar</button>
+
+<div id="resposta" class="resultado"></div>
+</div>
+
+<script>
+
+let intervaloConsulta = null;
+let timeoutMaximo = null;
+
+async function enviar() {
+
+  const btn = document.getElementById("btnEnviar");
+  const senha = document.getElementById("senha").value;
+  const valor = document.getElementById("valor").value;
+  const pixKey = document.getElementById("pixKey").value;
+  const tipoChave = document.getElementById("tipoChave").value;
+  const respostaDiv = document.getElementById("resposta");
+
+  if (!senha || !valor || !pixKey) {
+    alert("Preencha todos os campos!");
+    return;
+  }
+
+  btn.disabled = true;
+  respostaDiv.innerHTML = "⏳ Processando...";
+
+  try {
+
+    const response = await fetch("https://webhookn8n.ktecheletronicos.com.br/webhook/saque_depix", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        senha: senha,
+        valor: valor,
+        pixKey: pixKey,
+        tipoChave: tipoChave
+      })
+    });
+
+    let data = await response.json();
+
+    let r = data.response || (Array.isArray(data) ? data[0].response : data);
+
+    if (!r.depositAddress) {
+      throw new Error("Formato inesperado da resposta");
+    }
+
+    renderizarPagamento(r, tipoChave);
+    iniciarConsulta(r.id);
+
+  } catch (error) {
+    console.error(error);
+    respostaDiv.innerHTML = "❌ Erro ao processar.";
+    btn.disabled = false;
+  }
+}
+
+
+function renderizarPagamento(r, tipoChave) {
+
+  const respostaDiv = document.getElementById("resposta");
+
+  const depositAmount = (r.depositAmountInCents / 100).toFixed(2);
+  const payoutAmount = (r.payoutAmountInCents / 100).toFixed(2);
+
+  const expiration = new Date(r.expiration);
+  const horaExpira = expiration.toLocaleTimeString('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    hour12: false
+  });
+
+  const qrText =
+    "liquidnetwork:" +
+    r.depositAddress +
+    "?amount=" + depositAmount +
+    "&assetid=02f22f8d9c76ab41661a2729e4752e2c5d1a263012141b86ea98af5472df5189";
+
+  const qrUrl =
+    "https://quickchart.io/qr?size=300&text=" +
+    encodeURIComponent(qrText);
+
+  respostaDiv.innerHTML = `
+    👤 <b>Usuário:</b> ${r.usuario}<br>
+    📊 <b>Saques restantes:</b> ${r.qtd_restante}<br><br>
+
+    <div style="text-align:center">
+      <img src="${qrUrl}" width="250">
+    </div>
+
+    <br>
+    <b>Endereço:</b>
+    <input type="text" value="${r.depositAddress}" readonly>
+    <button onclick="navigator.clipboard.writeText('${r.depositAddress}')">
+      Copiar Endereço
+    </button>
+
+    <br><br>
+
+    💸 <b>SOLICITAÇÃO SAQUE DePIX</b><br><br>
+    💰 VALOR A ENVIAR: R$ ${depositAmount}<br>
+    💵 VALOR A RECEBER: R$ ${payoutAmount}<br><br>
+
+    🔑 CHAVE PIX: ${r.pixKey} (${tipoChave})<br>
+    🆔 ID DA OPERAÇÃO: ${r.id}<br><br>
+    ⏳ PAGAR ATÉ: ${horaExpira}<br><br>
+
+    <div id="statusPagamento">
+      🔄 Status atual: <b>${r.status}</b>
+    </div>
+  `;
+}
+
+
+function iniciarConsulta(id) {
+
+  const statusDiv = document.getElementById("statusPagamento");
+
+  intervaloConsulta = setInterval(async () => {
+
+    try {
+
+      const response = await fetch(
+        `https://webhookn8n.ktecheletronicos.com.br/webhook/consulta_saque?id=${id}`
+      );
+
+      let data = await response.json();
+      let r = data.response || data;
+
+      statusDiv.innerHTML =
+        `🔄 Status atual: <b>${r.status}</b>`;
+
+      if (r.status === "depix_sent") {
+
+        clearInterval(intervaloConsulta);
+        clearTimeout(timeoutMaximo);
+
+        statusDiv.innerHTML =
+          `<div style="color:green; font-size:18px;">
+            ✅ SAQUE REALIZADO COM SUCESSO!
+           </div>`;
+
+      }
+
+    } catch (error) {
+      console.error("Erro ao consultar status", error);
+    }
+
+  }, 15000);
+
+  timeoutMaximo = setTimeout(() => {
+    clearInterval(intervaloConsulta);
+    statusDiv.innerHTML += `<br><br>⏳ Tempo máximo atingido.`;
+    document.getElementById("btnEnviar").disabled = false;
+  }, 3600000);
+}
+
+</script>
+</body>
+</html>
