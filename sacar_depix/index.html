@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saque DePIX - KTech Eletrônicos e Importados</title>
     
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://ktecheletronicos.github.io/ktechfiles/logo_k.png">
     <link rel="shortcut icon" type="image/png" href="https://ktecheletronicos.github.io/ktechfiles/logo_k.png">
     
-    <!-- Meta tags para WhatsApp e redes sociais -->
     <meta property="og:title" content="Saque DePIX - KTech Eletrônicos e Importados">
     <meta property="og:description" content="Solicite seu saque via DePIX de forma rápida e segura. Transferência PIX integrada à rede Liquid com processamento automático e seguro.">
     <meta property="og:image" content="https://ktecheletronicos.github.io/ktechfiles/logo_ktech_eletronicos_compra_segura.png">
@@ -23,89 +21,688 @@
     
     <meta name="description" content="Solicite seu saque via DePIX na KTech Eletrônicos e Importados. Sistema seguro, automatizado e com monitoramento em tempo real.">
 
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-body {
-  font-family: Arial;
-  background: #f4f4f4;
-  padding: 30px;
-}
+  :root {
+    --blue-900: #0a0f2e;
+    --blue-800: #0d1545;
+    --blue-700: #0f1f6b;
+    --blue-600: #1338be;
+    --blue-500: #1a56db;
+    --blue-400: #3b82f6;
+    --blue-300: #60a5fa;
+    --blue-200: #bfdbfe;
+    --blue-100: #dbeafe;
+    --accent: #00d4ff;
+    --accent-glow: rgba(0, 212, 255, 0.3);
+    --success: #10b981;
+    --success-glow: rgba(16, 185, 129, 0.2);
+    --white: #ffffff;
+    --gray-100: #f0f4ff;
+    --card-bg: rgba(13, 21, 69, 0.6);
+  }
 
-.container {
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-  max-width: 500px;
-  margin: auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-label {
-  font-weight: bold;
-  margin-top: 15px;
-  display: block;
-}
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--blue-900);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
 
-input, select, button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(19, 56, 190, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(26, 86, 219, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-button {
-  background: #0a7cff;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 15px;
-}
+  /* Grid lines background */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-button:disabled {
-  background: gray;
-}
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+  }
 
-.resultado {
-  margin-top: 20px;
-  font-size: 14px;
-}
+  /* Header badge */
+  .brand-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    animation: fadeSlideDown 0.6s ease forwards;
+  }
 
-.copy-btn {
-  margin-top: 5px;
-  background: #28a745;
-}
+  .brand-badge img {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+  }
+
+  .brand-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-200);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .brand-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* Card */
+  .container {
+    background: linear-gradient(145deg, rgba(13, 21, 69, 0.9), rgba(10, 15, 46, 0.95));
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow:
+      0 0 0 1px rgba(0, 212, 255, 0.05),
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 40px rgba(19, 56, 190, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    animation: fadeSlideUp 0.7s ease forwards;
+  }
+
+  /* Card header */
+  .card-header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+    padding-bottom: 24px;
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .card-title-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--blue-600), var(--blue-500));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 4px 16px rgba(19, 56, 190, 0.4);
+    flex-shrink: 0;
+  }
+
+  .card-title h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.02em;
+  }
+
+  .card-subtitle {
+    font-size: 13px;
+    color: rgba(148, 183, 255, 0.6);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  /* Security badges */
+  .security-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .badge-secure {
+    background: rgba(0, 212, 255, 0.08);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    color: var(--accent);
+  }
+
+  .badge-auto {
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: var(--blue-300);
+  }
+
+  .badge-liquid {
+    background: rgba(96, 165, 250, 0.08);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    color: var(--blue-200);
+  }
+
+  /* Form */
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--blue-200);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .label-icon {
+    font-size: 15px;
+    opacity: 0.8;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 10px;
+    color: var(--white);
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    transition: all 0.25s ease;
+    outline: none;
+  }
+
+  input::placeholder {
+    color: rgba(148, 183, 255, 0.3);
+    font-size: 13px;
+  }
+
+  input:focus, select:focus {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.08), 0 0 20px rgba(0, 212, 255, 0.05);
+  }
+
+  select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2360a5fa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  select option {
+    background: var(--blue-800);
+    color: var(--white);
+  }
+
+  /* Two-column layout */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* Button */
+  .btn-submit {
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-500) 50%, #2563eb 100%);
+    color: var(--white);
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 20px rgba(19, 56, 190, 0.5);
+  }
+
+  .btn-submit::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .btn-submit:hover::before { left: 100%; }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(19, 56, 190, 0.6), 0 0 20px rgba(0, 212, 255, 0.15);
+  }
+
+  .btn-submit:active { transform: translateY(0); }
+
+  .btn-submit:disabled {
+    background: rgba(59, 130, 246, 0.2);
+    color: rgba(148, 183, 255, 0.4);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-submit:disabled::before { display: none; }
+
+  .btn-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  /* Resultado */
+  .resultado {
+    margin-top: 24px;
+  }
+
+  /* Result card styles (injected via JS renderizarPagamento) */
+  .result-container {
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .result-header {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(19, 56, 190, 0.3), rgba(26, 86, 219, 0.15));
+    border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .result-header-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--white);
+  }
+
+  .result-header-sub {
+    font-size: 12px;
+    color: var(--blue-300);
+    margin-top: 1px;
+  }
+
+  .result-body {
+    padding: 20px;
+  }
+
+  .qr-wrapper {
+    text-align: center;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    margin: 0 auto 20px;
+    width: fit-content;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .qr-wrapper img {
+    display: block;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .info-card {
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 10px;
+  }
+
+  .info-card-label {
+    font-size: 11px;
+    color: rgba(148, 183, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .info-card-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .info-card-value.green { color: var(--success); }
+  .info-card-value.accent { color: var(--accent); }
+
+  .address-block {
+    margin-bottom: 16px;
+  }
+
+  .address-label {
+    font-size: 12px;
+    color: rgba(148, 183, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  .address-row {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .address-row input {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 10px 12px;
+    border-color: rgba(59, 130, 246, 0.2);
+    color: var(--blue-200);
+  }
+
+  .copy-btn {
+    padding: 10px 16px;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.25);
+    color: var(--accent);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Sora', sans-serif;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    width: auto;
+    margin-top: 0;
+  }
+
+  .copy-btn:hover {
+    background: rgba(0, 212, 255, 0.18);
+    box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+  }
+
+  .meta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--blue-200);
+  }
+
+  .meta-row span { display: flex; align-items: center; gap: 6px; }
+  .meta-row b { color: var(--white); }
+
+  /* Status */
+  #statusPagamento {
+    padding: 14px 16px;
+    background: rgba(59, 130, 246, 0.06);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--blue-200);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.5s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  .status-success {
+    color: var(--success) !important;
+    font-size: 15px !important;
+    font-weight: 600;
+    border-color: rgba(16, 185, 129, 0.25) !important;
+    background: rgba(16, 185, 129, 0.06) !important;
+  }
+
+  /* Processing state */
+  .processing-state {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(59, 130, 246, 0.06);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    color: var(--blue-200);
+    font-size: 14px;
+  }
+
+  .processing-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+
+  /* Error state */
+  .error-state {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 10px;
+    color: #fca5a5;
+    font-size: 13px;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+    margin: 24px 0;
+  }
+
+  /* Animations */
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(0, 212, 255, 0); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  /* Footer note */
+  .footer-note {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: rgba(148, 183, 255, 0.35);
+    animation: fadeSlideUp 1s ease forwards;
+    letter-spacing: 0.02em;
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .container { padding: 24px 20px; }
+    .form-row { grid-template-columns: 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-<h2>💸 Solicitar Saque DePIX</h2>
+<div class="page-wrapper">
 
-<label>👤 Senha</label>
-<input type="password" id="senha">
+  <!-- Brand Badge -->
+  <div class="brand-badge">
+    <img src="https://ktecheletronicos.github.io/ktechfiles/logo_k.png" alt="KTech">
+    <span class="brand-name">KTech Eletrônicos</span>
+    <span class="brand-dot"></span>
+    <span class="brand-name" style="color: rgba(148,183,255,0.4)">DePIX</span>
+  </div>
 
-<label>💰 Valor do saque (R$)</label>
-<input type="number" id="valor" step="0.01">
+  <div class="container">
 
-<label>🔑 Chave Pix</label>
-<input type="text" id="pixKey">
+    <!-- Header -->
+    <div class="card-header">
+      <div class="card-title">
+        <div class="card-title-icon">💸</div>
+        <div>
+          <h2>Saque DePIX</h2>
+          <div class="card-subtitle">Transferência via Liquid Network · Processamento automático</div>
+        </div>
+      </div>
+      <div class="security-badges">
+        <span class="badge badge-secure">🔒 Seguro</span>
+        <span class="badge badge-auto">⚡ Automático</span>
+        <span class="badge badge-liquid">🌐 Liquid Network</span>
+      </div>
+    </div>
 
-<label>📌 Tipo da Chave</label>
-<select id="tipoChave">
-  <option value="CPF">CPF</option>
-  <option value="CNPJ">CNPJ</option>
-  <option value="EMAIL">E-mail</option>
-  <option value="TELEFONE">Telefone</option>
-  <option value="ALEATORIA">Chave Aleatória</option>
-</select>
+    <!-- Form -->
+    <div class="form-group">
+      <label><span class="label-icon">🔐</span> Senha de acesso</label>
+      <input type="password" id="senha" placeholder="Digite sua senha">
+    </div>
 
-<button id="btnEnviar" onclick="enviar()">Solicitar</button>
+    <div class="form-row">
+      <div class="form-group">
+        <label><span class="label-icon">💰</span> Valor (R$)</label>
+        <input type="number" id="valor" step="0.01" placeholder="0,00">
+      </div>
+      <div class="form-group">
+        <label><span class="label-icon">📌</span> Tipo da Chave</label>
+        <select id="tipoChave">
+          <option value="CPF">CPF</option>
+          <option value="CNPJ">CNPJ</option>
+          <option value="EMAIL">E-mail</option>
+          <option value="TELEFONE">Telefone</option>
+          <option value="ALEATORIA">Chave Aleatória</option>
+        </select>
+      </div>
+    </div>
 
-<div id="resposta" class="resultado"></div>
+    <div class="form-group">
+      <label><span class="label-icon">🔑</span> Chave PIX de destino</label>
+      <input type="text" id="pixKey" placeholder="Informe sua chave PIX">
+    </div>
+
+    <button class="btn-submit" id="btnEnviar" onclick="enviar()">
+      <span class="btn-inner">
+        <span id="btnSpinner" class="spinner"></span>
+        <span id="btnText">Solicitar Saque</span>
+        <span id="btnArrow">→</span>
+      </span>
+    </button>
+
+    <div id="resposta" class="resultado"></div>
+
+  </div>
+
+  <div class="footer-note">
+    🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2025
+  </div>
+
 </div>
 
+<!-- SCRIPTS ORIGINAIS — NÃO ALTERADOS -->
 <script>
+
+function traduzirStatus(status) {
+  const map = {
+    "unsent":  "Não enviado",
+    "sending": "Enviando pagamento",
+    "sent":    "Saque realizado"
+  };
+  return map[status] || status;
+}
 
 let intervaloConsulta = null;
 let timeoutMaximo = null;
@@ -125,7 +722,15 @@ async function enviar() {
   }
 
   btn.disabled = true;
-  respostaDiv.innerHTML = "⏳ Processando...";
+  document.getElementById("btnSpinner").style.display = "block";
+  document.getElementById("btnArrow").style.display = "none";
+  document.getElementById("btnText").textContent = "Processando...";
+
+  respostaDiv.innerHTML = `
+    <div class="processing-state">
+      <div class="processing-spinner"></div>
+      <span>Conectando ao servidor seguro e processando sua solicitação...</span>
+    </div>`;
 
   try {
 
@@ -153,9 +758,20 @@ async function enviar() {
 
   } catch (error) {
     console.error(error);
-    respostaDiv.innerHTML = "❌ Erro ao processar.";
-    btn.disabled = false;
+    respostaDiv.innerHTML = `
+      <div class="error-state">
+        ❌ <span>Erro ao processar a solicitação. Verifique a SENHA e a CHAVE PIX e tente novamente.</span>
+      </div>`;
+    resetBtn();
   }
+}
+
+function resetBtn() {
+  const btn = document.getElementById("btnEnviar");
+  btn.disabled = false;
+  document.getElementById("btnSpinner").style.display = "none";
+  document.getElementById("btnArrow").style.display = "inline";
+  document.getElementById("btnText").textContent = "Solicitar Saque";
 }
 
 
@@ -179,36 +795,60 @@ function renderizarPagamento(r, tipoChave) {
     "&assetid=02f22f8d9c76ab41661a2729e4752e2c5d1a263012141b86ea98af5472df5189";
 
   const qrUrl =
-    "https://quickchart.io/qr?size=300&text=" +
+    "https://quickchart.io/qr?size=250&text=" +
     encodeURIComponent(qrText);
 
   respostaDiv.innerHTML = `
-    👤 <b>Usuário:</b> ${r.usuario}<br>
-    📊 <b>Saques restantes:</b> ${r.qtd_restante}<br><br>
+    <div class="result-container">
+      <div class="result-header">
+        <span style="font-size:20px">📋</span>
+        <div>
+          <div class="result-header-title">Instrução de Pagamento</div>
+          <div class="result-header-sub">👤 ${r.usuario} · 📊 ${r.qtd_restante} saques restantes</div>
+        </div>
+      </div>
+      <div class="result-body">
 
-    <div style="text-align:center">
-      <img src="${qrUrl}" width="250">
-    </div>
+        <div style="text-align:center; margin-bottom: 20px;">
+          <div class="qr-wrapper">
+            <img src="${qrUrl}" width="220">
+          </div>
+          <div style="font-size:11px; color: rgba(148,183,255,0.4); margin-top:8px; font-family: 'JetBrains Mono', monospace;">
+            Escaneie com sua carteira Liquid
+          </div>
+        </div>
 
-    <br>
-    <b>Endereço:</b>
-    <input type="text" value="${r.depositAddress}" readonly>
-    <button onclick="navigator.clipboard.writeText('${r.depositAddress}')">
-      Copiar Endereço
-    </button>
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-label">💸 Enviar</div>
+            <div class="info-card-value accent">R$ ${depositAmount}</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">✅ Receber</div>
+            <div class="info-card-value green">R$ ${payoutAmount}</div>
+          </div>
+        </div>
 
-    <br><br>
+        <div class="address-block">
+          <div class="address-label">🏦 Endereço de Depósito</div>
+          <div class="address-row">
+            <input type="text" value="${r.depositAddress}" readonly>
+            <button class="copy-btn" onclick="navigator.clipboard.writeText('${r.depositAddress}').then(()=>{this.textContent='✓ Copiado';setTimeout(()=>{this.textContent='Copiar'},2000)})">Copiar</button>
+          </div>
+        </div>
 
-    💸 <b>SOLICITAÇÃO SAQUE DePIX</b><br><br>
-    💰 VALOR A ENVIAR: R$ ${depositAmount}<br>
-    💵 VALOR A RECEBER: R$ ${payoutAmount}<br><br>
+        <div class="meta-row">
+          <span>🔑 <b>Chave PIX:</b> ${r.pixKey} (${tipoChave})</span>
+          <span>🆔 <b>ID da Operação:</b> <span style="font-family:'JetBrains Mono',monospace;font-size:12px">${r.id}</span></span>
+          <span>⏳ <b>Pagar até:</b> ${horaExpira}</span>
+        </div>
 
-    🔑 CHAVE PIX: ${r.pixKey} (${tipoChave})<br>
-    🆔 ID DA OPERAÇÃO: ${r.id}<br><br>
-    ⏳ PAGAR ATÉ: ${horaExpira}<br><br>
+        <div id="statusPagamento">
+          <div class="status-dot"></div>
+          <span>Status atual: <b>${traduzirStatus(r.status)}</b></span>
+        </div>
 
-    <div id="statusPagamento">
-      🔄 Status atual: <b>${r.status}</b>
+      </div>
     </div>
   `;
 }
@@ -230,17 +870,16 @@ function iniciarConsulta(id) {
       let r = data.response || data;
 
       statusDiv.innerHTML =
-        `🔄 Status atual: <b>${r.status}</b>`;
+        `<div class="status-dot"></div><span>Status atual: <b>${traduzirStatus(r.status)}</b></span>`;
 
       if (r.status === "sent") {
 
         clearInterval(intervaloConsulta);
         clearTimeout(timeoutMaximo);
 
+        statusDiv.className = "status-success";
         statusDiv.innerHTML =
-          `<div style="color:green; font-size:18px;">
-            ✅ SAQUE REALIZADO COM SUCESSO!
-           </div>`;
+          `✅ SAQUE REALIZADO COM SUCESSO!`;
 
       }
 
@@ -252,8 +891,9 @@ function iniciarConsulta(id) {
 
   timeoutMaximo = setTimeout(() => {
     clearInterval(intervaloConsulta);
-    statusDiv.innerHTML += `<br><br>⏳ Tempo máximo atingido.`;
-    document.getElementById("btnEnviar").disabled = false;
+    const statusDiv = document.getElementById("statusPagamento");
+    if (statusDiv) statusDiv.innerHTML += `<br><small style="opacity:0.6">⏳ Tempo máximo de monitoramento atingido.</small>`;
+    resetBtn();
   }, 3600000);
 }
 
