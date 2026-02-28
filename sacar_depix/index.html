@@ -687,7 +687,7 @@
   </div>
 
   <div class="footer-note">
-    🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.2
+    🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.3
   </div>
 
 </div>
@@ -720,6 +720,53 @@ function renderizarStatus(status) {
 let intervaloConsulta = null;
 let timeoutMaximo = null;
 
+function validarChavePix(chave, tipo) {
+  if (tipo === "CPF") {
+    const nums = chave.replace(/\D/g, "");
+    if (nums.length !== 11) return "CPF deve conter 11 dígitos.";
+    if (/^(\d)\1{10}$/.test(nums)) return "CPF inválido (todos os dígitos iguais).";
+    let soma = 0, resto;
+    for (let i = 1; i <= 9; i++) soma += parseInt(nums[i-1]) * (11 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(nums[9])) return "CPF inválido (dígito verificador incorreto).";
+    soma = 0;
+    for (let i = 1; i <= 10; i++) soma += parseInt(nums[i-1]) * (12 - i);
+    resto = (soma * 10) % 11;
+    if (resto === 10 || resto === 11) resto = 0;
+    if (resto !== parseInt(nums[10])) return "CPF inválido (dígito verificador incorreto).";
+    return null;
+  }
+  if (tipo === "CNPJ") {
+    const nums = chave.replace(/\D/g, "");
+    if (nums.length !== 14) return "CNPJ deve conter 14 dígitos.";
+    if (/^(\d)\1{13}$/.test(nums)) return "CNPJ inválido (todos os dígitos iguais).";
+    const calc = (n, tam) => {
+      let soma = 0, pos = tam - 7;
+      for (let i = tam; i >= 1; i--) {
+        soma += parseInt(n[tam - i]) * pos--;
+        if (pos < 2) pos = 9;
+      }
+      return soma % 11 < 2 ? 0 : 11 - (soma % 11);
+    };
+    if (calc(nums, 12) !== parseInt(nums[12])) return "CNPJ inválido (dígito verificador incorreto).";
+    if (calc(nums, 13) !== parseInt(nums[13])) return "CNPJ inválido (dígito verificador incorreto).";
+    return null;
+  }
+  if (tipo === "EMAIL") {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!re.test(chave)) return "E-mail inválido. Verifique o formato (ex: nome@dominio.com).";
+    return null;
+  }
+  if (tipo === "TELEFONE") {
+    const nums = chave.replace(/\D/g, "");
+    if (nums.length < 10 || nums.length > 11) return "Telefone deve ter 10 ou 11 dígitos (com DDD).";
+    return null;
+  }
+  // ALEATORIA — qualquer valor é aceito
+  return null;
+}
+
 async function enviar() {
 
   const btn = document.getElementById("btnEnviar");
@@ -731,6 +778,13 @@ async function enviar() {
 
   if (!senha || !valor || !pixKey) {
     alert("Preencha todos os campos!");
+    return;
+  }
+
+  // Validação da chave PIX por tipo
+  const erroChave = validarChavePix(pixKey.trim(), tipoChave);
+  if (erroChave) {
+    alert("❌ Chave PIX inválida\n\n" + erroChave);
     return;
   }
 
