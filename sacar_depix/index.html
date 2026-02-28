@@ -734,6 +734,15 @@ async function enviar() {
     return;
   }
 
+  const confirmado = confirm(
+    "⚠️ Confirme sua chave PIX antes de prosseguir:\n\n" +
+    "Tipo: " + tipoChave + "\n" +
+    "Chave: " + pixKey + "\n\n" +
+    "Certifique-se de que esta é a chave correta. " +
+    "Não será possível alterar o destino após a solicitação."
+  );
+  if (!confirmado) return;
+
   btn.disabled = true;
   document.getElementById("btnSpinner").style.display = "block";
   document.getElementById("btnArrow").style.display = "none";
@@ -794,6 +803,11 @@ function renderizarPagamento(r, tipoChave) {
 
   const depositAmount = (r.depositAmountInCents / 100).toFixed(2);
   const payoutAmount = (r.payoutAmountInCents / 100).toFixed(2);
+  const depositAmountBR = depositAmount.replace(".", ",");
+  const payoutAmountBR = payoutAmount.replace(".", ",");
+  const taxaValor = (r.depositAmountInCents - r.payoutAmountInCents) / 100;
+  const taxaPerc = ((taxaValor / (r.depositAmountInCents / 100)) * 100).toFixed(2).replace(".", ",");
+  const taxaValorBR = taxaValor.toFixed(2).replace(".", ",");
 
   const expiration = new Date(r.expiration);
   expiration.setHours(expiration.getHours() + 3);
@@ -832,12 +846,16 @@ function renderizarPagamento(r, tipoChave) {
         <div class="info-grid">
           <div class="info-card">
             <div class="info-card-label">💸 Enviar</div>
-            <div class="info-card-value accent">R$ ${depositAmount}</div>
+            <div class="info-card-value accent">R$ ${depositAmountBR}</div>
           </div>
           <div class="info-card">
             <div class="info-card-label">✅ Receber</div>
-            <div class="info-card-value green">R$ ${payoutAmount}</div>
+            <div class="info-card-value green">R$ ${payoutAmountBR}</div>
           </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:rgba(251,191,36,0.05); border:1px solid rgba(251,191,36,0.18); border-radius:10px; margin-top:-4px; margin-bottom:16px; font-size:13px; color:#fde68a;">
+          <span style="font-size:15px">🏷️</span>
+          <span>Taxa total: <b>R$ ${taxaValorBR}</b> <span style="opacity:0.6; font-size:12px">(${taxaPerc}%)</span></span>
         </div>
 
         <div class="address-block">
@@ -845,6 +863,10 @@ function renderizarPagamento(r, tipoChave) {
           <div class="address-row">
             <input type="text" value="${r.depositAddress}" readonly>
             <button class="copy-btn" onclick="navigator.clipboard.writeText('${r.depositAddress}').then(()=>{this.textContent='✓ Copiado';setTimeout(()=>{this.textContent='Copiar'},2000)})">Copiar</button>
+          </div>
+          <div style="margin-top:10px; padding:12px 14px; background:rgba(239,68,68,0.07); border:1px solid rgba(239,68,68,0.25); border-radius:10px; font-size:12px; color:#fca5a5; line-height:1.6;">
+            ⚠️ <b>Atenção:</b> Envie <b style="color:#f87171">exatamente R$ ${depositAmountBR}</b> para este endereço Liquid.<br>
+            Valores diferentes do solicitado resultarão na <b>perda total dos fundos</b>, sem possibilidade de reembolso ou estorno.
           </div>
         </div>
 
