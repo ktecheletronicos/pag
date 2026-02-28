@@ -697,11 +697,24 @@
 
 function traduzirStatus(status) {
   const map = {
-    "unsent":  "Não enviado",
+    "unsent":  "Aguardando pagamento",
     "sending": "Enviando pagamento",
     "sent":    "Saque realizado"
   };
   return map[status] || status;
+}
+
+function renderizarStatus(status) {
+  const label = traduzirStatus(status);
+  if (status === "unsent") {
+    return `<div class="status-dot" style="background:#f87171;"></div>
+            <span style="color:#fca5a5">Status: <b>${label}</b></span>`;
+  } else if (status === "sending") {
+    return `<div class="status-dot" style="background:#fbbf24;"></div>
+            <span style="color:#fde68a">Status: <b>${label}</b></span>`;
+  } else {
+    return `<div class="status-dot"></div><span>Status: <b>${label}</b></span>`;
+  }
 }
 
 let intervaloConsulta = null;
@@ -760,7 +773,7 @@ async function enviar() {
     console.error(error);
     respostaDiv.innerHTML = `
       <div class="error-state">
-        ❌ <span>Erro ao processar a solicitação. Verifique a SENHA e a CHAVE PIX e tente novamente.</span>
+        ❌ <span>Erro ao processar a solicitação. Verifique os dados e tente novamente.</span>
       </div>`;
     resetBtn();
   }
@@ -783,10 +796,8 @@ function renderizarPagamento(r, tipoChave) {
   const payoutAmount = (r.payoutAmountInCents / 100).toFixed(2);
 
   const expiration = new Date(r.expiration);
-  const horaExpira = expiration.toLocaleTimeString('pt-BR', {
-    timeZone: 'America/Sao_Paulo',
-    hour12: false
-  });
+  expiration.setHours(expiration.getHours() + 3);
+  const horaExpira = expiration.toLocaleTimeString('pt-BR', { hour12: false });
 
   const qrText =
     "liquidnetwork:" +
@@ -844,8 +855,7 @@ function renderizarPagamento(r, tipoChave) {
         </div>
 
         <div id="statusPagamento">
-          <div class="status-dot"></div>
-          <span>Status atual: <b>${traduzirStatus(r.status)}</b></span>
+          ${renderizarStatus(r.status)}
         </div>
 
       </div>
@@ -869,13 +879,16 @@ function iniciarConsulta(id) {
       let data = await response.json();
       let r = data.response || data;
 
-      statusDiv.innerHTML =
-        `<div class="status-dot"></div><span>Status atual: <b>${traduzirStatus(r.status)}</b></span>`;
+      statusDiv.innerHTML = renderizarStatus(r.status);
 
       if (r.status === "sent") {
 
         clearInterval(intervaloConsulta);
         clearTimeout(timeoutMaximo);
+
+        // Remove the "Processando..." processing state if still visible
+        const processingEl = document.querySelector(".processing-state");
+        if (processingEl) processingEl.remove();
 
         statusDiv.className = "status-success";
         statusDiv.innerHTML =
