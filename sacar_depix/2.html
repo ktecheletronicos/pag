@@ -645,6 +645,8 @@
     </div>
 
     <form id="withdrawalForm" onsubmit="event.preventDefault(); enviar();">
+		<!-- Campo oculto de usuário para facilitar o salvamento de senha pelo navegador -->
+		<input type="text" name="username" autocomplete="username" style="display:none;" aria-hidden="true" tabindex="-1">
         <div class="form-group">
           <label><span class="label-icon">🔐</span> Senha de acesso</label>
           <input type="password" id="senha" name="password" autocomplete="current-password" placeholder="Digite sua senha">
@@ -686,7 +688,7 @@
   </div>
 
   <div class="footer-note">
-    🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.4
+    🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.5
   </div>
 
 </div>
