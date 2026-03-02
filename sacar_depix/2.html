@@ -688,7 +688,7 @@
   </div>
 
   <div class="footer-note">
-    🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.5
+    🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.6
   </div>
 
 </div>
@@ -857,7 +857,7 @@ async function enviar() {
       body: JSON.stringify({
         senha: senha,
         valor: valorInput,
-        pixKey: pixKey,
+        pixKey: tipoChave === 'TELEFONE' ? pixKey.replace(/\D/g, '') : pixKey,
         tipoChave: tipoChave
       })
     });
