@@ -629,7 +629,7 @@
 
   <div class="container">
 
-    <div class="card-header">
+    <div class="card-header" id="headerForm">
       <div class="card-title">
         <div class="card-title-icon">💸</div>
         <div>
@@ -747,7 +747,7 @@ function renderizarStatus(status) {
 
 let intervaloConsulta = null;
 let timeoutMaximo = null;
-let isProcessing = false; // Bloqueio de múltiplos cliques reais
+let isProcessing = false;
 
 function validarChavePix(chave, tipo) {
   if (tipo === "CPF") {
@@ -796,7 +796,7 @@ function validarChavePix(chave, tipo) {
 }
 
 async function enviar() {
-  if (isProcessing) return; // Impede múltiplos cliques simultâneos
+  if (isProcessing) return;
 
   const btn = document.getElementById("btnEnviar");
   const senha = document.getElementById("senha").value;
@@ -812,13 +812,11 @@ async function enviar() {
 
   const valorNum = parseFloat(valorInput);
 
-  // Validação Valor Mínimo e Máximo
   if (valorNum < 2 || valorNum > 6000) {
       alert("❌ Valor não permitido.\nO saque deve ser entre R$ 2,00 e R$ 6.000,00.");
       return;
   }
 
-  // Bloqueio de casas decimais extras
   if (valorInput.includes('.') && valorInput.split('.')[1].length > 2) {
       alert("❌ Erro de formato.\nO valor deve ter no máximo 2 casas decimais.");
       return;
@@ -865,7 +863,6 @@ async function enviar() {
     let data = await response.json();
     let r = data.response || (Array.isArray(data) ? data[0].response : data);
 
-    // Verificação de erro vindo do JSON
     if (r.error || data.error) {
         const msgErro = r.error || data.error;
         throw new Error(msgErro);
@@ -874,9 +871,13 @@ async function enviar() {
     if (!r.depositAddress) {
       throw new Error("Formato inesperado da resposta");
     }
+	// --- O LUGAR EXATO É AQUI ---
+    // Remove o cabeçalho e o formulário da visão do usuário
 
+    document.getElementById("withdrawalForm").style.display = "none";
+	
     renderizarPagamento(r, tipoChave);
-    iniciarConsulta(r.id);
+    // NÃO inicia a consulta automaticamente aqui mais.
 
   } catch (error) {
     console.error(error);
@@ -981,6 +982,14 @@ function renderizarPagamento(r, tipoChave) {
           ${renderizarStatus(r.status)}
         </div>
 
+        <button class="btn-submit" id="btnConfirmarEnvio" onclick="iniciarConsulta('${r.id}')" style="margin-top: 15px; background: linear-gradient(135deg, var(--success), #059669);">
+          <span class="btn-inner">
+            <span id="confirmSpinner" class="spinner"></span>
+            <span id="confirmText">Já enviei o pagamento</span>
+            <span id="confirmCheck">✓</span>
+          </span>
+        </button>
+
       </div>
     </div>
   `;
@@ -988,7 +997,18 @@ function renderizarPagamento(r, tipoChave) {
 
 
 function iniciarConsulta(id) {
+  const btnConfirmar = document.getElementById("btnConfirmarEnvio");
+  const spinner = document.getElementById("confirmSpinner");
+  const check = document.getElementById("confirmCheck");
+  const text = document.getElementById("confirmText");
   const statusDiv = document.getElementById("statusPagamento");
+
+  // Feedback visual no botão ao clicar
+  btnConfirmar.disabled = true;
+  spinner.style.display = "block";
+  check.style.display = "none";
+  text.textContent = "Verificando depósito...";
+
   intervaloConsulta = setInterval(async () => {
     try {
       const response = await fetch(
@@ -1004,17 +1024,20 @@ function iniciarConsulta(id) {
         clearTimeout(timeoutMaximo);
         statusDiv.className = "status-success";
         statusDiv.innerHTML = `✅ SAQUE REALIZADO COM SUCESSO!`;
+        btnConfirmar.style.display = "none"; // Esconde o botão após sucesso
       }
     } catch (error) {
       console.error("Erro ao consultar status", error);
     }
-  }, 15000);
+  }, 10000);
 
   timeoutMaximo = setTimeout(() => {
     clearInterval(intervaloConsulta);
-    const statusDiv = document.getElementById("statusPagamento");
     if (statusDiv) statusDiv.innerHTML += `<br><small style="opacity:0.6">⏳ Tempo máximo atingido.</small>`;
-    resetBtn();
+    btnConfirmar.disabled = false;
+    spinner.style.display = "none";
+    check.style.display = "inline";
+    text.textContent = "Tentar verificar novamente";
   }, 3600000);
 }
 
