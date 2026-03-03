@@ -825,7 +825,7 @@ function validarChavePix(chave, tipo) {
   }
   if (tipo === "TELEFONE") {
     const nums = chave.replace(/\D/g, "");
-    if (nums.length < 10 || nums.length > 11) return "Telefone deve ter 10 ou 11 dígitos (com DDD).";
+    if (nums.length !== 11) return "Telefone deve ter exatamente 11 dígitos (DDD + 9 dígitos).";
     return null;
   }
   return null;
