@@ -627,6 +627,111 @@
             margin: 20px 0;
         }
 
+        /* QR Modal */
+        .qr-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 8, 28, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-modal-overlay.open {
+            display: flex;
+            animation: fadeIn 0.2s ease forwards;
+        }
+
+        .qr-modal-box {
+            background: linear-gradient(145deg, rgba(13, 21, 69, 0.98), rgba(10, 15, 46, 0.99));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 28px;
+            text-align: center;
+            box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.08), 0 30px 80px rgba(0,0,0,0.7);
+            max-width: 360px;
+            width: calc(100% - 40px);
+            animation: scaleIn 0.25s ease forwards;
+        }
+
+        .qr-modal-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--blue-200);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+
+        .qr-modal-img-wrap {
+            display: inline-block;
+            padding: 16px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+        }
+
+        .qr-modal-img-wrap img {
+            display: block;
+            width: 280px;
+            max-width: 100%;
+            border-radius: 4px;
+        }
+
+        .qr-modal-hint {
+            margin-top: 14px;
+            font-size: 12px;
+            color: rgba(148, 183, 255, 0.45);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .qr-modal-close {
+            margin-top: 18px;
+            padding: 10px 28px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: var(--blue-300);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'Sora', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .qr-modal-close:hover {
+            background: rgba(59, 130, 246, 0.18);
+        }
+
+        .qrcode-wrapper {
+            cursor: zoom-in;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .qrcode-wrapper:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(0, 212, 255, 0.15);
+        }
+
+        .qr-zoom-hint {
+            margin-top: 8px;
+            font-size: 11px;
+            color: rgba(0, 212, 255, 0.45);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.88); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
         /* Animations */
         @keyframes fadeSlideDown {
             from { opacity: 0; transform: translateY(-16px); }
@@ -724,10 +829,11 @@
                 </div>
 
                 <div class="qrcode-container">
-                    <div class="qrcode-wrapper">
+                    <div class="qrcode-wrapper" onclick="openQrModal()">
                         <img id="qrcodeImage" src="" alt="QR Code PIX">
                     </div>
                     <div class="qrcode-hint">Escaneie com o app do seu banco</div>
+                    <div class="qr-zoom-hint">🔍 Toque para ampliar</div>
                 </div>
 
                 <div class="divider"></div>
@@ -770,7 +876,7 @@
     </div>
 
     <div class="footer-note">
-        🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.8
+        🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.9
     </div>
 
 </div>
@@ -973,5 +1079,35 @@
 
     window.addEventListener('load', loadPayment);
 </script>
+    <!-- QR Modal -->
+    <div class="qr-modal-overlay" id="qrModal" onclick="closeQrModal(event)">
+        <div class="qr-modal-box">
+            <div class="qr-modal-title">📷 Escaneie o QR Code</div>
+            <div class="qr-modal-img-wrap">
+                <img id="qrcodeModalImage" src="" alt="QR Code PIX ampliado">
+            </div>
+            <div class="qr-modal-hint">Aproxime a câmera do seu banco</div>
+            <button class="qr-modal-close" onclick="document.getElementById('qrModal').classList.remove('open')">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        function openQrModal() {
+            const src = document.getElementById('qrcodeImage').src;
+            document.getElementById('qrcodeModalImage').src = src;
+            document.getElementById('qrModal').classList.add('open');
+        }
+
+        function closeQrModal(event) {
+            if (event.target === document.getElementById('qrModal')) {
+                document.getElementById('qrModal').classList.remove('open');
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') document.getElementById('qrModal').classList.remove('open');
+        });
+    </script>
+
 </body>
 </html>
