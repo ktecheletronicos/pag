@@ -692,7 +692,7 @@
   </div>
 
   <div class="footer-note">
-    🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.7
+    🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.8
   </div>
 
 </div>
@@ -704,8 +704,22 @@ const pixKeyInput = document.getElementById('pixKey');
 const tipoChaveSelect = document.getElementById('tipoChave');
 
 pixKeyInput.addEventListener('input', (e) => {
-    let value = e.target.value.replace(/\D/g, '');
     const tipo = tipoChaveSelect.value;
+
+    // Remove espaços automaticamente para EMAIL e ALEATORIA
+    if (tipo === 'EMAIL' || tipo === 'ALEATORIA') {
+        const cursorPos = e.target.selectionStart;
+        const beforeLen = e.target.value.length;
+        e.target.value = e.target.value.replace(/\s/g, '');
+        // Ajusta cursor se algum espaço foi removido
+        const removed = beforeLen - e.target.value.length;
+        if (removed > 0) {
+            e.target.setSelectionRange(cursorPos - removed, cursorPos - removed);
+        }
+        return;
+    }
+
+    let value = e.target.value.replace(/\D/g, '');
 
     if (tipo === 'CPF') {
         value = value.replace(/(\d{3})(\d)/, '$1.$2');
@@ -722,6 +736,22 @@ pixKeyInput.addEventListener('input', (e) => {
         value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
         value = value.replace(/(\d)(\d{4})$/, '$1-$2');
         e.target.value = value.substring(0, 15);
+    }
+});
+
+// Ao colar (paste) também remove espaços para EMAIL e ALEATORIA
+pixKeyInput.addEventListener('paste', (e) => {
+    const tipo = tipoChaveSelect.value;
+    if (tipo === 'EMAIL' || tipo === 'ALEATORIA') {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData('text');
+        const cleaned = pasted.replace(/\s/g, '');
+        const start = e.target.selectionStart;
+        const end = e.target.selectionEnd;
+        const current = e.target.value;
+        e.target.value = current.substring(0, start) + cleaned + current.substring(end);
+        const newPos = start + cleaned.length;
+        e.target.setSelectionRange(newPos, newPos);
     }
 });
 
@@ -877,13 +907,10 @@ async function enviar() {
     if (!r.depositAddress) {
       throw new Error("Formato inesperado da resposta");
     }
-	// --- O LUGAR EXATO É AQUI ---
-    // Remove o cabeçalho e o formulário da visão do usuário
 
     document.getElementById("withdrawalForm").style.display = "none";
 	
     renderizarPagamento(r, tipoChave);
-    // NÃO inicia a consulta automaticamente aqui mais.
 
   } catch (error) {
     console.error(error);
@@ -956,7 +983,7 @@ function renderizarPagamento(r, tipoChave) {
             <div class="info-card-label">💸 Enviar</div>
             <div style="display:flex; align-items:center; gap:8px;">
               <div class="info-card-value accent">R$ ${depositAmountBR}</div>
-              <button onclick="navigator.clipboard.writeText('${depositAmount}').then(()=>{this.textContent='✓';this.style.color='#10b981';setTimeout(()=>{this.innerHTML='<span class=\\'copy-label\\'>Copiar</span><span class=\\'copy-icon\\'>📋</span>';this.style.color=''},2000)})" style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:var(--accent);border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;font-family:'Sora',sans-serif;padding:3px 7px;white-space:nowrap;transition:all 0.2s;flex-shrink:0;"><span class='copy-label'>Copiar</span><span class='copy-icon' style='display:none'>📋</span></button>
+              <button onclick="navigator.clipboard.writeText('${depositAmount}').then(()=>{this.textContent='✓';this.style.color='#10b981';setTimeout(()=>{this.textContent='📋';this.style.color=''},2000)})" style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:var(--accent);border-radius:6px;cursor:pointer;font-size:14px;padding:3px 8px;white-space:nowrap;transition:all 0.2s;flex-shrink:0;">📋</button>
             </div>
           </div>
           <div class="info-card">
