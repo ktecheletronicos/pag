@@ -742,7 +742,7 @@
     </div>
 
     <div class="footer-note">
-        🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v1.1
+        🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 2.1
     </div>
 
 </div>
@@ -902,18 +902,14 @@
                         </button>
                     </div>
 
-                    <div class="divider"></div>
-
-                    <div class="address-block">
-                        <div class="address-label">🏦 Endereço DePIX (Liquid)</div>
-                        <div style="padding:14px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(59,130,246,0.2); border-radius:10px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--blue-200); word-break:break-all; line-height:1.7;">${depositDepixAddress}</div>
-                        <div style="margin-top:10px; padding:12px 14px; background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); border-radius:10px; font-size:12px; color:rgba(148,183,255,0.7); line-height:1.6;">
-                            ℹ️ Este é o endereço Liquid associado à sua transferência. O pagamento deve ser feito via PIX no QR Code acima.
+                    <div id="timerBlock" style="padding:14px 16px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:12px; margin-bottom:14px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                            <span style="font-size:12px; color:rgba(253,230,138,0.7); font-weight:500;">⏱️ Tempo restante para pagar</span>
+                            <span id="timerValue" style="font-size:20px; font-weight:700; color:#fde68a; font-family:'JetBrains Mono',monospace;">20:00</span>
                         </div>
-                    </div>
-
-                    <div class="meta-row">
-                        <span>🆔 <b>ID da Operação:</b> <span style="font-family:'JetBrains Mono',monospace;font-size:11px">${r.id}</span></span>
+                        <div style="width:100%; height:5px; background:rgba(245,158,11,0.15); border-radius:3px; overflow:hidden;">
+                            <div id="timerBar" style="height:100%; width:100%; background:linear-gradient(90deg,#f59e0b,#fbbf24); border-radius:3px; transition:width 1s linear;"></div>
+                        </div>
                     </div>
 
                     <div id="checkingStatus" style="display:flex; align-items:center; gap:8px; padding:12px 14px; background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); border-radius:10px; font-size:12px; color:rgba(148,183,255,0.7);">
@@ -925,25 +921,59 @@
             </div>
         `;
 
-        iniciarVerificacaoPagamento(r.id);
+        iniciarVerificacaoPagamento(r.id, depositDepixAddress);
     }
 
     let checkInterval = null;
+    let countdownInterval = null;
+    const TIMEOUT_SEGUNDOS = 20 * 60; // 20 minutos
 
-    function iniciarVerificacaoPagamento(id) {
+    function iniciarVerificacaoPagamento(id, depositDepixAddress) {
         if (checkInterval) clearInterval(checkInterval);
+        if (countdownInterval) clearInterval(countdownInterval);
 
+        const totalSegundos = TIMEOUT_SEGUNDOS;
+        let segundosRestantes = totalSegundos;
+
+        // Countdown visual
+        countdownInterval = setInterval(() => {
+            segundosRestantes--;
+            const mins = Math.floor(segundosRestantes / 60);
+            const secs = segundosRestantes % 60;
+            const timerEl = document.getElementById('timerValue');
+            const barEl = document.getElementById('timerBar');
+            const blockEl = document.getElementById('timerBlock');
+
+            if (timerEl) timerEl.textContent = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+            if (barEl) barEl.style.width = ((segundosRestantes / totalSegundos) * 100) + '%';
+
+            // Vira vermelho nos últimos 2 minutos
+            if (segundosRestantes === 120 && blockEl) {
+                blockEl.style.background = 'rgba(239,68,68,0.06)';
+                blockEl.style.borderColor = 'rgba(239,68,68,0.25)';
+                if (timerEl) timerEl.style.color = '#fca5a5';
+                document.querySelector('#timerBlock span:first-child') && (document.querySelector('#timerBlock span:first-child').style.color = '#fca5a5');
+                if (barEl) barEl.style.background = 'linear-gradient(90deg,#ef4444,#f87171)';
+            }
+
+            if (segundosRestantes <= 0) {
+                clearInterval(countdownInterval);
+                clearInterval(checkInterval);
+                mostrarExpirado();
+            }
+        }, 1000);
+
+        // Verificação de pagamento a cada 10s
         async function verificar() {
             try {
                 const res = await fetch(`https://webhookn8n.ktecheletronicos.com.br/webhook/consultar_pag_depix?id=${id}`);
                 if (!res.ok) return;
                 const data = await res.json();
-                const status = data.response && data.response.status;
-                const payerName = data.response && data.response.payerName;
-
-                if (status === 'depix_sent') {
+                const resp = data.response;
+                if (resp && resp.status === 'depix_sent') {
                     clearInterval(checkInterval);
-                    mostrarSucesso(payerName);
+                    clearInterval(countdownInterval);
+                    mostrarSucesso(resp.payerName, resp.payerTaxNumber, depositDepixAddress, id, resp.valueInCents);
                 }
             } catch (e) {
                 console.error('Erro ao verificar pagamento:', e);
@@ -954,18 +984,104 @@
         checkInterval = setInterval(verificar, 10000);
     }
 
-    function mostrarSucesso(payerName) {
+    function mostrarExpirado() {
         const respostaDiv = document.getElementById('resposta');
         respostaDiv.innerHTML = `
-            <div style="text-align:center; padding:40px 20px; animation: fadeSlideUp 0.5s ease forwards;">
-                <div style="font-size:72px; margin-bottom:20px; display:block; animation: bounceIn 0.6s ease forwards;">✅</div>
-                <h2 style="font-size:22px; font-weight:700; color:var(--success); margin-bottom:16px;">Pagamento Confirmado!</h2>
-                <div style="font-size:14px; color:rgba(148,183,255,0.7); line-height:1.7;">
-                    ${payerName ? `Olá, <strong style="color:var(--white)">${payerName}</strong>!<br><br>` : ''}
-                    Sua transferência foi confirmada com sucesso! 🎉
-                </div>
+            <div style="text-align:center; padding:48px 20px; animation:fadeSlideUp 0.5s ease forwards;">
+                <div style="font-size:64px; margin-bottom:20px;">⏰</div>
+                <h2 style="font-size:22px; font-weight:700; color:#fca5a5; margin-bottom:10px;">Tempo Expirado</h2>
+                <p style="font-size:14px; color:rgba(148,183,255,0.5); line-height:1.6;">O código de pagamento expirou.<br>Por favor, gere uma nova transferência.</p>
             </div>
         `;
+    }
+
+    function mostrarSucesso(payerName, payerTaxNumber, depositDepixAddress, operacaoId, valueInCents) {
+        const respostaDiv = document.getElementById('resposta');
+
+        // Cálculos de taxas
+        const valorPago = (valueInCents || 0) / 100;
+        const taxaDepix = 0.99;
+        const taxaPixpay = valorPago * 0.005;
+        const valorLiquid = valorPago - taxaDepix - taxaPixpay;
+
+        const fmt = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        const payerBlock = `
+            <div style="margin-top:20px; padding:16px 20px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:12px; text-align:left; display:flex; flex-direction:column; gap:10px;">
+                ${payerName ? `<div style="font-size:13px; color:rgba(148,255,200,0.7);">👤 <b style="color:#fff">Pagador:</b> ${payerName}</div>` : ''}
+                ${payerTaxNumber ? `<div style="font-size:13px; color:rgba(148,255,200,0.7);">🪪 <b style="color:#fff">CPF/CNPJ:</b> <span style="font-family:'JetBrains Mono',monospace;">${formatarDocumento(payerTaxNumber)}</span></div>` : ''}
+                ${valueInCents ? `<div style="font-size:14px; color:rgba(148,255,200,0.9);">💰 <b style="color:#fff">Valor pago:</b> <span style="font-family:'JetBrains Mono',monospace; color:var(--success); font-size:15px; font-weight:700;">R$ ${fmt(valorPago)}</span></div>` : ''}
+            </div>`;
+
+        const detalhesBlock = `
+            <div style="margin-top:14px;">
+                <button onclick="toggleDetalhes()" style="width:100%; padding:12px 16px; background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.2); border-radius:10px; color:var(--blue-300); font-family:'Sora',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:space-between; transition:all 0.2s;" id="btnDetalhes">
+                    <span>📊 Mais informações</span>
+                    <span id="arrowDetalhes" style="font-size:12px; transition:transform 0.3s;">▼</span>
+                </button>
+                <div id="painelDetalhes" style="display:none; margin-top:8px; padding:16px; background:rgba(255,255,255,0.02); border:1px solid rgba(59,130,246,0.15); border-radius:10px; display:none; flex-direction:column; gap:10px;">
+
+                    <div style="display:flex; flex-direction:column; gap:6px; padding-bottom:12px; border-bottom:1px solid rgba(59,130,246,0.12);">
+                        <div style="font-size:11px; color:rgba(148,183,255,0.45); text-transform:uppercase; letter-spacing:0.06em; font-weight:500; margin-bottom:2px;">💸 Taxas descontadas</div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px; color:rgba(148,183,255,0.7);">
+                            <span>Taxa DePIX</span>
+                            <span style="font-family:'JetBrains Mono',monospace; color:#fca5a5;">- R$ ${fmt(taxaDepix)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:13px; color:rgba(148,183,255,0.7);">
+                            <span>Taxa PixPay (0,5%)</span>
+                            <span style="font-family:'JetBrains Mono',monospace; color:#fca5a5;">- R$ ${fmt(taxaPixpay)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:700; margin-top:4px; padding-top:8px; border-top:1px solid rgba(59,130,246,0.12);">
+                            <span style="color:var(--white);">✅ Valor recebido (Liquid)</span>
+                            <span style="font-family:'JetBrains Mono',monospace; color:var(--success);">R$ ${fmt(valorLiquid)}</span>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <div>
+                            <div style="font-size:11px; color:rgba(148,183,255,0.45); text-transform:uppercase; letter-spacing:0.06em; font-weight:500; margin-bottom:6px;">🏦 Endereço DePIX (Liquid)</div>
+                            <div style="padding:12px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(59,130,246,0.15); border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--blue-200); word-break:break-all; line-height:1.7;">${depositDepixAddress}</div>
+                        </div>
+                        <div style="padding:11px 14px; background:rgba(255,255,255,0.02); border:1px solid rgba(59,130,246,0.1); border-radius:8px; font-size:12px; color:var(--blue-200);">
+                            🆔 <b style="color:#fff">ID da Operação:</b> <span style="font-family:'JetBrains Mono',monospace;font-size:11px;">${operacaoId}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>`;
+
+        respostaDiv.innerHTML = `
+            <div style="padding:32px 20px; animation:fadeSlideUp 0.5s ease forwards;">
+                <div style="text-align:center;">
+                    <div style="font-size:72px; margin-bottom:20px; display:block; animation:bounceIn 0.6s ease forwards;">✅</div>
+                    <h2 style="font-size:24px; font-weight:800; color:var(--success); margin-bottom:12px; letter-spacing:-0.02em;">Pagamento Confirmado!</h2>
+                    <p style="font-size:14px; color:rgba(148,183,255,0.7); line-height:1.7;">Transferência recebida com sucesso! 🎉</p>
+                </div>
+                ${payerBlock}
+                ${detalhesBlock}
+            </div>
+        `;
+    }
+
+    function toggleDetalhes() {
+        const painel = document.getElementById('painelDetalhes');
+        const arrow = document.getElementById('arrowDetalhes');
+        const btn = document.getElementById('btnDetalhes');
+        const aberto = painel.style.display === 'flex';
+        painel.style.display = aberto ? 'none' : 'flex';
+        arrow.style.transform = aberto ? 'rotate(0deg)' : 'rotate(180deg)';
+        btn.style.background = aberto ? 'rgba(59,130,246,0.08)' : 'rgba(59,130,246,0.14)';
+        btn.style.borderColor = aberto ? 'rgba(59,130,246,0.2)' : 'rgba(59,130,246,0.35)';
+    }
+
+    function formatarDocumento(doc) {
+        const nums = doc.replace(/\D/g, '');
+        if (nums.length === 11) {
+            return nums.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        } else if (nums.length === 14) {
+            return nums.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+        }
+        return doc;
     }
 
     function copiarCodigo() {
