@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamento PIX - KTech Eletrônicos e Importados!</title>
     
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://ktecheletronicos.github.io/ktechfiles/logo_k.png">
     <link rel="shortcut icon" type="image/png" href="https://ktecheletronicos.github.io/ktechfiles/logo_k.png">
     
-    <!-- Meta tags para WhatsApp e redes sociais -->
     <meta property="og:title" content="Pague via Pix na KTech Eletrônicos e Importados">
     <meta property="og:description" content="Pagamento rápido e seguro via DePIX. Transferências instantâneas, seguras e sem burocracia usando PIX integrado à cripto.">
     <meta property="og:image" content="https://ktecheletronicos.github.io/ktechfiles/logo_ktech_eletronicos_compra_segura.png">
@@ -22,466 +20,808 @@
     <meta name="twitter:image" content="https://ktecheletronicos.github.io/ktechfiles/logo_ktech_eletronicos_compra_segura.png">
     
     <meta name="description" content="Realize seu pagamento de forma segura via PIX na KTech Eletrônicos e Importados">
-    
+
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --blue-900: #0a0f2e;
+            --blue-800: #0d1545;
+            --blue-700: #0f1f6b;
+            --blue-600: #1338be;
+            --blue-500: #1a56db;
+            --blue-400: #3b82f6;
+            --blue-300: #60a5fa;
+            --blue-200: #bfdbfe;
+            --blue-100: #dbeafe;
+            --accent: #00d4ff;
+            --accent-glow: rgba(0, 212, 255, 0.3);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --warning: #f59e0b;
+            --white: #ffffff;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Sora', sans-serif;
+            background: var(--blue-900);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            padding: 30px 20px;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(19, 56, 190, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 40% at 50% 50%, rgba(26, 86, 219, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
             width: 100%;
-            overflow: hidden;
+            max-width: 520px;
         }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header-logo {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 15px;
-            background: white;
-            border-radius: 50%;
+        /* Brand badge */
+        .brand-badge {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            gap: 10px;
+            margin-bottom: 28px;
+            animation: fadeSlideDown 0.6s ease forwards;
         }
 
-        .header-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+        .brand-badge img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
         }
 
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .header p {
+        .brand-name {
             font-size: 14px;
-            opacity: 0.95;
-        }
-
-        .store-name {
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 5px;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .value-input-section {
-            display: block;
-        }
-
-        .value-input-section.hidden {
-            display: none;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-label {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 10px;
             font-weight: 600;
+            color: var(--blue-200);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
 
-        .currency-input {
+        .brand-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        /* Main card */
+        .container {
+            background: linear-gradient(145deg, rgba(13, 21, 69, 0.9), rgba(10, 15, 46, 0.95));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(0, 212, 255, 0.05),
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(19, 56, 190, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            animation: fadeSlideUp 0.7s ease forwards;
+        }
+
+        /* Card header */
+        .card-header {
+            padding: 28px 32px 24px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+            background: linear-gradient(135deg, rgba(19, 56, 190, 0.2), rgba(26, 86, 219, 0.1));
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        .card-title-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-500));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 16px rgba(19, 56, 190, 0.4);
+            flex-shrink: 0;
+        }
+
+        .card-title h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: -0.02em;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: rgba(148, 183, 255, 0.6);
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        .security-badges {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+        }
+
+        .badge-secure {
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: var(--accent);
+        }
+
+        .badge-auto {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: var(--blue-300);
+        }
+
+        .badge-pix {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        /* Content area */
+        .content {
+            padding: 28px 32px 32px;
+        }
+
+        /* Value input section */
+        .value-input-section { display: block; }
+        .value-input-section.hidden { display: none; }
+
+        .field-label {
+            font-size: 11px;
+            color: rgba(148, 183, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .currency-input-wrap {
             position: relative;
             display: flex;
             align-items: center;
+            margin-bottom: 6px;
         }
 
         .currency-symbol {
             position: absolute;
-            left: 15px;
-            font-size: 24px;
-            color: #667eea;
-            font-weight: bold;
+            left: 16px;
+            font-size: 22px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: rgba(148, 183, 255, 0.35);
+            pointer-events: none;
+            transition: color 0.2s;
         }
 
         #amountInput {
             width: 100%;
-            padding: 20px 20px 20px 50px;
-            font-size: 28px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-weight: bold;
-            color: #333;
-            transition: border-color 0.3s;
+            padding: 18px 18px 18px 58px;
+            font-size: 30px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            color: var(--accent);
+            transition: border-color 0.25s, box-shadow 0.25s;
+            letter-spacing: -0.02em;
         }
+
+        #amountInput::placeholder { color: rgba(148, 183, 255, 0.2); }
 
         #amountInput:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.08), 0 0 20px rgba(0, 212, 255, 0.06);
         }
 
-        .btn-generate {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s;
-            margin-top: 10px;
+        .currency-input-wrap:focus-within .currency-symbol {
+            color: rgba(0, 212, 255, 0.5);
         }
 
-        .btn-generate:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-generate:active {
-            transform: translateY(0);
-        }
-
-        .btn-generate:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            display: none;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .payment-info {
-            display: none;
-        }
-
-        .payment-info.active {
-            display: block;
-        }
-
-        .info-item {
+        .helper-text {
+            font-size: 12px;
+            color: rgba(148, 183, 255, 0.35);
             margin-bottom: 20px;
         }
 
-        .info-label {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .info-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .amount {
-            font-size: 32px;
-            color: #667eea;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .qrcode-container {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .qrcode-container img {
-            max-width: 300px;
+        /* Generate button */
+        .btn-generate {
             width: 100%;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            padding: 10px;
+            padding: 15px 24px;
+            background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-500) 50%, #2563eb 100%);
+            color: var(--white);
+            font-family: 'Sora', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            letter-spacing: 0.02em;
+            box-shadow: 0 4px 20px rgba(19, 56, 190, 0.5);
         }
 
-        .copy-section {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
+        .btn-generate::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+            transition: left 0.5s ease;
         }
 
-        .copy-label {
+        .btn-generate:hover::before { left: 100%; }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(19, 56, 190, 0.6), 0 0 20px rgba(0, 212, 255, 0.15);
+        }
+
+        .btn-generate:active { transform: translateY(0); }
+        .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            display: none;
+        }
+
+        .loading.active { display: block; }
+
+        .loading-spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .loading p {
             font-size: 14px;
-            color: #666;
+            color: rgba(148, 183, 255, 0.6);
+        }
+
+        /* Payment info */
+        .payment-info { display: none; }
+        .payment-info.active { display: block; }
+
+        .amount-block {
+            text-align: center;
+            margin: 0 0 16px;
+            padding: 18px;
+            background: rgba(59, 130, 246, 0.06);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 14px;
+        }
+
+        .amount-label {
+            font-size: 11px;
+            color: rgba(148, 183, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .amount-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.02em;
+        }
+
+        /* Timer */
+        .timer {
+            padding: 14px 16px;
+            background: rgba(245, 158, 11, 0.06);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            margin: 0 0 14px;
+            transition: background 0.5s, border-color 0.5s;
+        }
+
+        .timer-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: 10px;
         }
 
-        .copy-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 12px;
-            word-break: break-all;
-            background: white;
-        }
-
-        .btn-copy {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: transform 0.2s;
-        }
-
-        .btn-copy:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-copy:active {
-            transform: translateY(0);
-        }
-
-        .btn-copy.copied {
-            background: #28a745;
-        }
-
-        .timer {
-            text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            background: #fff3cd;
-            border-radius: 10px;
-        }
-
         .timer-label {
-            font-size: 14px;
-            color: #856404;
-            margin-bottom: 5px;
+            font-size: 12px;
+            color: rgba(253, 230, 138, 0.7);
+            font-weight: 500;
         }
 
         .timer-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #856404;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fde68a;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .progress-bar {
             width: 100%;
-            height: 6px;
-            background: #f0f0f0;
+            height: 5px;
+            background: rgba(245, 158, 11, 0.15);
             border-radius: 3px;
             overflow: hidden;
-            margin-top: 10px;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+            border-radius: 3px;
             transition: width 1s linear;
         }
 
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
+        .timer.danger {
+            background: rgba(239, 68, 68, 0.06);
+            border-color: rgba(239, 68, 68, 0.25);
         }
 
-        .expired {
-            text-align: center;
-            padding: 40px;
+        .timer.danger .timer-label,
+        .timer.danger .timer-value { color: #fca5a5; }
+
+        .timer.danger .progress-fill {
+            background: linear-gradient(90deg, #ef4444, #f87171);
         }
+
+        /* Checking status */
+        .checking-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 14px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: rgba(148, 183, 255, 0.7);
+        }
+
+        .checking-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 1.5s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        /* QR Code */
+        .qrcode-container {
+            text-align: center;
+            margin: 0 0 16px;
+        }
+
+        .qrcode-wrapper {
+            display: inline-block;
+            padding: 14px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .qrcode-wrapper img {
+            display: block;
+            max-width: 240px;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .qrcode-hint {
+            margin-top: 10px;
+            font-size: 11px;
+            color: rgba(148, 183, 255, 0.4);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+            margin: 16px 0;
+        }
+
+        /* Copy section */
+        .copy-section { margin-bottom: 0; }
+
+        .copy-label {
+            font-size: 11px;
+            color: rgba(148, 183, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .copy-row {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .copy-input {
+            flex: 1;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 10px;
+            color: var(--blue-200);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            resize: none;
+            height: 60px;
+            outline: none;
+            word-break: break-all;
+            transition: all 0.25s;
+        }
+
+        .copy-input:focus {
+            border-color: rgba(0, 212, 255, 0.4);
+            background: rgba(59, 130, 246, 0.06);
+        }
+
+        .btn-copy-small {
+            padding: 10px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            color: var(--accent);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Sora', sans-serif;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            align-self: stretch;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-copy-small:hover {
+            background: rgba(0, 212, 255, 0.18);
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+        }
+
+        .btn-copy-small.copied {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--success);
+        }
+
+        .btn-copy-main {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-500) 50%, #2563eb 100%);
+            color: var(--white);
+            font-family: 'Sora', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            letter-spacing: 0.02em;
+            box-shadow: 0 4px 20px rgba(19, 56, 190, 0.5);
+        }
+
+        .btn-copy-main::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-copy-main:hover::before { left: 100%; }
+
+        .btn-copy-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(19, 56, 190, 0.6), 0 0 20px rgba(0, 212, 255, 0.15);
+        }
+
+        .btn-copy-main:active { transform: translateY(0); }
+
+        .btn-copy-main.copied {
+            background: linear-gradient(135deg, #059669, var(--success));
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Error */
+        .error {
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            background: rgba(239, 68, 68, 0.06);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            color: #fca5a5;
+            font-size: 13px;
+            display: none;
+            margin-top: 14px;
+        }
+
+        /* Expired */
+        .expired {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .expired-icon { font-size: 56px; margin-bottom: 16px; }
 
         .expired h2 {
-            color: #dc3545;
-            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fca5a5;
+            margin-bottom: 8px;
         }
 
-        .success {
-            text-align: center;
-            padding: 40px;
-            display: none;
+        .expired p {
+            font-size: 13px;
+            color: rgba(148, 183, 255, 0.5);
         }
 
-        .success.active {
+        /* Success */
+        .success { display: none; text-align: center; padding: 40px 20px; }
+        .success.active { display: block; }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: bounceIn 0.6s ease forwards;
             display: block;
         }
 
-        .success-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-
         .success h2 {
-            color: #28a745;
-            margin-bottom: 20px;
-            font-size: 28px;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 16px;
         }
 
         .success-message {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 30px;
-            line-height: 1.6;
+            font-size: 14px;
+            color: rgba(148, 183, 255, 0.7);
+            line-height: 1.7;
+            margin-bottom: 28px;
         }
 
+        .success-message strong { color: var(--white); }
+
         .btn-whatsapp {
-            display: inline-block;
-            padding: 15px 30px;
-            background: #25D366;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #128C7E, #25D366);
             color: white;
             text-decoration: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            transition: transform 0.2s;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Sora', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
         }
 
         .btn-whatsapp:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.45);
         }
 
-        .checking-status {
+        /* Footer */
+        .footer-note {
             text-align: center;
-            padding: 10px;
-            background: #d1ecf1;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-size: 14px;
-            color: #0c5460;
+            margin-top: 20px;
+            font-size: 12px;
+            color: rgba(148, 183, 255, 0.35);
+            animation: fadeSlideUp 1s ease forwards;
+            letter-spacing: 0.02em;
         }
 
-        .footer-info {
-            text-align: center;
-            padding: 20px;
-            background: #f8f9fa;
-            border-top: 1px solid #eee;
-            font-size: 13px;
-            color: #666;
+        /* Animations */
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-16px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .footer-info strong {
-            color: #667eea;
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .helper-text {
-            font-size: 13px;
-            color: #666;
-            margin-top: 8px;
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(0, 212, 255, 0); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .content { padding: 24px 20px 28px; }
+            .card-header { padding: 24px 20px 20px; }
+            .copy-row { flex-direction: column; }
+            .btn-copy-small { width: 100%; justify-content: center; height: auto; padding: 10px; }
         }
     </style>
 </head>
 <body>
+
+<div class="page-wrapper">
+
+    <div class="brand-badge">
+        <img src="https://ktecheletronicos.github.io/ktechfiles/logo_k.png" alt="KTech">
+        <span class="brand-name">KTech Eletrônicos</span>
+        <span class="brand-dot"></span>
+        <span class="brand-name" style="color: rgba(148,183,255,0.4)">DePIX</span>
+    </div>
+
     <div class="container">
-        <div class="header">
-            <div class="header-logo">
-                <img src="https://ktecheletronicos.github.io/ktechfiles/logo_k.png" alt="KTech Logo">
+
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-title-icon">🔐</div>
+                <div>
+                    <h1>Pagamento PIX</h1>
+                    <div class="card-subtitle">Pagamento seguro · Validação automática em tempo real</div>
+                </div>
             </div>
-            <h1>🔐 Pagamento PIX</h1>
-            <p>Pagamento seguro via PIX</p>
-            <div class="store-name">KTech Eletrônicos e Importados</div>
+            <div class="security-badges">
+                <span class="badge badge-secure">🔒 Seguro</span>
+                <span class="badge badge-auto">⚡ Automático</span>
+                <span class="badge badge-pix">✅ PIX Instantâneo</span>
+            </div>
         </div>
 
         <div class="content">
+
+            <!-- Value input section -->
             <div class="value-input-section" id="valueInputSection">
-                <div class="input-group">
-                    <div class="input-label">💰 Valor do Pagamento</div>
-                    <div class="currency-input">
-                        <span class="currency-symbol">R$</span>
-                        <input 
-                            type="text" 
-                            id="amountInput" 
-                            placeholder="0,00"
-                            maxlength="10"
-                        >
-                    </div>
-                    <div class="helper-text">Digite o valor que deseja pagar</div>
+                <div class="field-label">💰 Valor do Pagamento</div>
+                <div class="currency-input-wrap">
+                    <input 
+                        type="text" 
+                        id="amountInput" 
+                        placeholder="0,00"
+                        maxlength="10"
+                    >
+                    <span class="currency-symbol">R$</span>
                 </div>
+                <div class="helper-text">Digite o valor que deseja pagar</div>
                 <button class="btn-generate" id="btnGenerate" onclick="generatePayment()">
                     Gerar Código PIX
                 </button>
+                <div class="error" id="error"></div>
             </div>
 
+            <!-- Loading -->
             <div class="loading" id="loading">
-                <div class="spinner"></div>
+                <div class="loading-spinner"></div>
                 <p>Gerando código de pagamento...</p>
             </div>
 
+            <!-- Payment info -->
             <div class="payment-info" id="paymentInfo">
-                <div class="amount" id="amount"></div>
+
+                <div class="amount-block">
+                    <div class="amount-label">💰 Valor a pagar</div>
+                    <div class="amount-value" id="amount"></div>
+                </div>
 
                 <div class="timer" id="timer">
-                    <div class="timer-label">⏱️ Tempo restante</div>
-                    <div class="timer-value" id="timerValue">29:50</div>
+                    <div class="timer-top">
+                        <span class="timer-label">⏱️ Tempo restante para pagar</span>
+                        <span class="timer-value" id="timerValue">29:50</span>
+                    </div>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progressFill" style="width: 100%"></div>
                     </div>
                 </div>
 
                 <div class="checking-status" id="checkingStatus">
-                    🔍 Verificando pagamento automaticamente...
+                    <div class="checking-dot"></div>
+                    <span>Verificando pagamento automaticamente...</span>
                 </div>
 
                 <div class="qrcode-container">
-                    <img id="qrcodeImage" src="" alt="QR Code PIX">
+                    <div class="qrcode-wrapper">
+                        <img id="qrcodeImage" src="" alt="QR Code PIX">
+                    </div>
+                    <div class="qrcode-hint">Escaneie com o app do seu banco</div>
                 </div>
 
+                <div class="divider"></div>
+
                 <div class="copy-section">
-                    <div class="copy-label">📋 Código PIX Copia e Cola</div>
-                    <textarea class="copy-input" id="pixCode" readonly></textarea>
-                    <button class="btn-copy" id="btnCopy" onclick="copyCode()">
+                    <div class="copy-label">📋 PIX Copia e Cola</div>
+                    <div class="copy-row">
+                        <textarea class="copy-input" id="pixCode" readonly></textarea>
+                        <button class="btn-copy-small" id="btnCopySmall" onclick="copyCode()">Copiar</button>
+                    </div>
+                    <button class="btn-copy-main" id="btnCopy" onclick="copyCode()">
                         Copiar Código PIX
                     </button>
                 </div>
+
             </div>
 
+            <!-- Success -->
             <div class="success" id="success">
-                <div class="success-icon">✅</div>
+                <span class="success-icon">✅</span>
                 <h2>Pagamento Confirmado!</h2>
                 <div class="success-message">
                     Olá, <strong id="payerName"></strong>!<br><br>
@@ -493,260 +833,234 @@
                 </a>
             </div>
 
-            <div class="expired" id="expired" style="display: none;">
-                <h2>⏰ Tempo Expirado</h2>
-                <p>O código de pagamento expirou. Por favor, gere um novo código.</p>
+            <!-- Expired -->
+            <div class="expired" id="expired">
+                <div class="expired-icon">⏰</div>
+                <h2>Tempo Expirado</h2>
+                <p>O código de pagamento expirou.<br>Por favor, gere um novo código.</p>
             </div>
 
-            <div class="error" id="error" style="display: none;"></div>
-        </div>
-
-        <div class="footer-info">
-            <strong>KTech Eletrônicos e Importados</strong><br>
-            Pagamentos seguros, rápidos e com validação automática
         </div>
     </div>
 
-    <script>
-        let countdownInterval;
-        let checkPaymentInterval;
-        let expirationTime = null;
-        let transactionId = null;
+    <div class="footer-note">
+        🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026
+    </div>
 
-        const amountInput = document.getElementById('amountInput');
-        
-        amountInput.addEventListener('input', function(e) {
-            let value = e.target.value;
-            
-            // Remove tudo exceto números e vírgula
-            value = value.replace(/[^\d,]/g, '');
-            
-            // Permite apenas uma vírgula
-            const parts = value.split(',');
-            if (parts.length > 2) {
-                value = parts[0] + ',' + parts.slice(1).join('');
-            }
-            
-            // Limita a 2 casas decimais após a vírgula
-            if (parts.length === 2 && parts[1].length > 2) {
-                value = parts[0] + ',' + parts[1].substring(0, 2);
-            }
-            
-            // Formata a parte inteira com pontos de milhar
-            if (parts[0]) {
-                const integerFormatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                value = parts.length === 2 ? integerFormatted + ',' + parts[1] : integerFormatted;
-            }
-            
-            e.target.value = value;
-        });
+</div>
 
-        amountInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                generatePayment();
-            }
-        });
+<script>
+    let countdownInterval;
+    let checkPaymentInterval;
+    let expirationTime = null;
+    let transactionId = null;
 
-        function parseAmount(value) {
-            // Remove pontos de milhar e converte vírgula para ponto
-            const cleaned = value.replace(/\./g, '').replace(',', '.');
-            const amount = parseFloat(cleaned);
-            return isNaN(amount) ? 0 : amount;
+    const amountInput = document.getElementById('amountInput');
+
+    amountInput.addEventListener('input', function(e) {
+        let value = e.target.value;
+        value = value.replace(/[^\d,]/g, '');
+        const parts = value.split(',');
+        if (parts.length > 2) {
+            value = parts[0] + ',' + parts.slice(1).join('');
+        }
+        if (parts.length === 2 && parts[1].length > 2) {
+            value = parts[0] + ',' + parts[1].substring(0, 2);
+        }
+        if (parts[0]) {
+            const integerFormatted = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            value = parts.length === 2 ? integerFormatted + ',' + parts[1] : integerFormatted;
+        }
+        e.target.value = value;
+    });
+
+    amountInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') generatePayment();
+    });
+
+    function parseAmount(value) {
+        const cleaned = value.replace(/\./g, '').replace(',', '.');
+        const amount = parseFloat(cleaned);
+        return isNaN(amount) ? 0 : amount;
+    }
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function startCountdown(expiresAt) {
+        const expirationDate = new Date(expiresAt);
+        expirationTime = expirationDate.getTime();
+
+        const timerElement = document.getElementById('timerValue');
+        const progressElement = document.getElementById('progressFill');
+
+        const now = Date.now();
+        const totalSeconds = Math.floor((expirationTime - now) / 1000);
+
+        console.log('ExpiresAt:', expiresAt);
+        console.log('Expiration timestamp:', expirationTime);
+        console.log('Current timestamp:', now);
+        console.log('Total seconds:', totalSeconds);
+
+        if (totalSeconds <= 0) {
+            showExpired();
+            return;
         }
 
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = seconds % 60;
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        function startCountdown(expiresAt) {
-            // O expiresAt vem em UTC (formato ISO)
-            // Convertemos para timestamp UTC
-            const expirationDate = new Date(expiresAt);
-            expirationTime = expirationDate.getTime();
-            
-            const timerElement = document.getElementById('timerValue');
-            const progressElement = document.getElementById('progressFill');
-            
-            // Calcula o tempo total em segundos usando Date.now() que também é UTC
+        countdownInterval = setInterval(() => {
             const now = Date.now();
-            const totalSeconds = Math.floor((expirationTime - now) / 1000);
+            const remainingMilliseconds = expirationTime - now;
+            const remainingSeconds = Math.floor(remainingMilliseconds / 1000);
 
-            // Debug - remover depois
-            console.log('ExpiresAt:', expiresAt);
-            console.log('Expiration timestamp:', expirationTime);
-            console.log('Current timestamp:', now);
-            console.log('Total seconds:', totalSeconds);
-
-            // Verifica se o tempo já expirou antes de começar
-            if (totalSeconds <= 0) {
+            if (remainingSeconds <= 0) {
+                clearInterval(countdownInterval);
+                clearInterval(checkPaymentInterval);
                 showExpired();
                 return;
             }
 
-            countdownInterval = setInterval(() => {
-                const now = Date.now();
-                const remainingMilliseconds = expirationTime - now;
-                const remainingSeconds = Math.floor(remainingMilliseconds / 1000);
-                
-                if (remainingSeconds <= 0) {
-                    clearInterval(countdownInterval);
-                    clearInterval(checkPaymentInterval);
-                    showExpired();
-                    return;
-                }
+            timerElement.textContent = formatTime(remainingSeconds);
+            const progress = (remainingSeconds / totalSeconds) * 100;
+            progressElement.style.width = progress + '%';
 
-                timerElement.textContent = formatTime(remainingSeconds);
-                const progress = (remainingSeconds / totalSeconds) * 100;
-                progressElement.style.width = progress + '%';
+            if (remainingSeconds <= 120 && remainingSeconds > 119) {
+                document.getElementById('timer').classList.add('danger');
+            }
+        }, 1000);
+    }
 
-                // Muda a cor do timer quando faltam 2 minutos
-                if (remainingSeconds <= 120 && remainingSeconds > 119) {
-                    document.getElementById('timer').style.background = '#f8d7da';
-                    document.querySelector('.timer-label').style.color = '#721c24';
-                    document.querySelector('.timer-value').style.color = '#721c24';
-                }
-            }, 1000);
+    function showExpired() {
+        document.getElementById('paymentInfo').style.display = 'none';
+        document.getElementById('expired').style.display = 'block';
+    }
+
+    function showError(message) {
+        const errorElement = document.getElementById('error');
+        errorElement.textContent = message;
+        errorElement.style.display = 'flex';
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('valueInputSection').classList.remove('hidden');
+    }
+
+    function showSuccess(payerName) {
+        clearInterval(countdownInterval);
+        clearInterval(checkPaymentInterval);
+        document.getElementById('paymentInfo').style.display = 'none';
+        document.getElementById('payerName').textContent = payerName;
+        document.getElementById('success').classList.add('active');
+    }
+
+    async function checkPaymentStatus() {
+        if (!transactionId) return;
+        try {
+            const response = await fetch(
+                `https://webhookn8n.ktecheletronicos.com.br/webhook/consultar_pag_depix?id=${transactionId}`
+            );
+            if (!response.ok) {
+                console.error('Erro ao consultar status do pagamento');
+                return;
+            }
+            const data = await response.json();
+            if (data.response && data.response.status === 'depix_sent') {
+                showSuccess(data.response.payerName);
+            }
+        } catch (error) {
+            console.error('Erro ao verificar pagamento:', error);
+        }
+    }
+
+    function startPaymentCheck() {
+        checkPaymentStatus();
+        checkPaymentInterval = setInterval(checkPaymentStatus, 30000);
+    }
+
+    function copyCode() {
+        const pixCode = document.getElementById('pixCode');
+        const btnCopy = document.getElementById('btnCopy');
+        const btnCopySmall = document.getElementById('btnCopySmall');
+
+        pixCode.select();
+        pixCode.setSelectionRange(0, 99999);
+
+        navigator.clipboard.writeText(pixCode.value).then(() => {
+            btnCopy.textContent = '✓ Código Copiado!';
+            btnCopy.classList.add('copied');
+            btnCopySmall.textContent = '✓';
+            btnCopySmall.classList.add('copied');
+
+            setTimeout(() => {
+                btnCopy.textContent = 'Copiar Código PIX';
+                btnCopy.classList.remove('copied');
+                btnCopySmall.textContent = 'Copiar';
+                btnCopySmall.classList.remove('copied');
+            }, 3000);
+        });
+    }
+
+    async function generatePayment() {
+        const inputValue = amountInput.value.trim();
+
+        if (!inputValue || inputValue === '0,00') {
+            showError('❌ Por favor, digite um valor válido');
+            return;
         }
 
-        function showExpired() {
-            document.getElementById('paymentInfo').style.display = 'none';
-            document.getElementById('expired').style.display = 'block';
+        const amount = parseAmount(inputValue);
+
+        if (amount <= 0 || isNaN(amount)) {
+            showError('❌ Valor inválido. Digite um valor maior que zero');
+            return;
         }
 
-        function showError(message) {
-            const errorElement = document.getElementById('error');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
+        if (amount > 99999.99) {
+            showError('❌ Valor muito alto. Máximo permitido: R$ 99.999,99');
+            return;
+        }
+
+        document.getElementById('valueInputSection').classList.add('hidden');
+        document.getElementById('loading').classList.add('active');
+        document.getElementById('error').style.display = 'none';
+
+        try {
+            const response = await fetch(
+                'https://webhookn8n.ktecheletronicos.com.br/webhook/gerar_vialink_depix_valor_editavel',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: amount })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Erro ao gerar código de pagamento');
+            }
+
+            const paymentData = await response.json();
+
+            if (!paymentData.id_transacao || !paymentData.expiresAt) {
+                throw new Error('Dados de pagamento incompletos');
+            }
+
+            transactionId = paymentData.id_transacao;
+
+            document.getElementById('amount').textContent = `R$ ${amount.toFixed(2).replace('.', ',')}`;
+            document.getElementById('qrcodeImage').src = paymentData.url_qrcode;
+            document.getElementById('pixCode').value = paymentData.copia_cola;
+
             document.getElementById('loading').classList.remove('active');
-            document.getElementById('valueInputSection').classList.remove('hidden');
+            document.getElementById('paymentInfo').classList.add('active');
+
+            startCountdown(paymentData.expiresAt);
+            startPaymentCheck();
+
+        } catch (error) {
+            console.error('Erro:', error);
+            showError('❌ Erro ao gerar código de pagamento. Tente novamente.');
         }
-
-        function showSuccess(payerName) {
-            clearInterval(countdownInterval);
-            clearInterval(checkPaymentInterval);
-            
-            document.getElementById('paymentInfo').style.display = 'none';
-            
-            document.getElementById('payerName').textContent = payerName;
-            document.getElementById('success').classList.add('active');
-        }
-
-        async function checkPaymentStatus() {
-            if (!transactionId) return;
-
-            try {
-                const response = await fetch(
-                    `https://webhookn8n.ktecheletronicos.com.br/webhook/consultar_pag_depix?id=${transactionId}`
-                );
-
-                if (!response.ok) {
-                    console.error('Erro ao consultar status do pagamento');
-                    return;
-                }
-
-                const data = await response.json();
-
-                if (data.response && data.response.status === 'depix_sent') {
-                    showSuccess(data.response.payerName);
-                }
-
-            } catch (error) {
-                console.error('Erro ao verificar pagamento:', error);
-            }
-        }
-
-        function startPaymentCheck() {
-            checkPaymentStatus();
-            checkPaymentInterval = setInterval(checkPaymentStatus, 30000);
-        }
-
-        function copyCode() {
-            const pixCode = document.getElementById('pixCode');
-            const btnCopy = document.getElementById('btnCopy');
-            
-            pixCode.select();
-            pixCode.setSelectionRange(0, 99999);
-            
-            navigator.clipboard.writeText(pixCode.value).then(() => {
-                btnCopy.textContent = '✓ Código Copiado!';
-                btnCopy.classList.add('copied');
-                
-                setTimeout(() => {
-                    btnCopy.textContent = 'Copiar Código PIX';
-                    btnCopy.classList.remove('copied');
-                }, 3000);
-            });
-        }
-
-        async function generatePayment() {
-            const inputValue = amountInput.value.trim();
-            
-            if (!inputValue || inputValue === '0,00') {
-                showError('❌ Por favor, digite um valor válido');
-                return;
-            }
-
-            const amount = parseAmount(inputValue);
-            
-            if (amount <= 0 || isNaN(amount)) {
-                showError('❌ Valor inválido. Digite um valor maior que zero');
-                return;
-            }
-
-            if (amount > 99999.99) {
-                showError('❌ Valor muito alto. Máximo permitido: R$ 99.999,99');
-                return;
-            }
-
-            document.getElementById('valueInputSection').classList.add('hidden');
-            document.getElementById('loading').classList.add('active');
-            document.getElementById('error').style.display = 'none';
-
-            try {
-                const response = await fetch(
-                    'https://webhookn8n.ktecheletronicos.com.br/webhook/gerar_vialink_depix_valor_editavel',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            amount: amount
-                        })
-                    }
-                );
-
-                if (!response.ok) {
-                    throw new Error('Erro ao gerar código de pagamento');
-                }
-
-                const paymentData = await response.json();
-
-                // Validação dos dados recebidos
-                if (!paymentData.id_transacao || !paymentData.expiresAt) {
-                    throw new Error('Dados de pagamento incompletos');
-                }
-
-                transactionId = paymentData.id_transacao;
-
-                document.getElementById('amount').textContent = `R$ ${amount.toFixed(2).replace('.', ',')}`;
-                document.getElementById('qrcodeImage').src = paymentData.url_qrcode;
-                document.getElementById('pixCode').value = paymentData.copia_cola;
-
-                document.getElementById('loading').classList.remove('active');
-                document.getElementById('paymentInfo').classList.add('active');
-
-                // Inicia o countdown usando o expiresAt do webhook
-                startCountdown(paymentData.expiresAt);
-                startPaymentCheck();
-
-            } catch (error) {
-                console.error('Erro:', error);
-                showError('❌ Erro ao gerar código de pagamento. Tente novamente.');
-            }
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
