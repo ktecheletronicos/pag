@@ -742,7 +742,7 @@
     </div>
 
     <div class="footer-note">
-        🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 2.2
+        🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026
     </div>
 
 </div>
@@ -872,21 +872,24 @@
                 <div class="result-body">
 
                     <div style="text-align:center; margin-bottom:20px;">
-                        <div class="qr-wrapper">
-                            <img src="${r.qrImageUrl}" width="220" alt="QR Code PIX">
+                        <div style="display:inline-block; padding:8px; background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+                            <img src="${r.qrImageUrl}" width="270" style="display:block; border-radius:6px;" alt="QR Code PIX">
                         </div>
-                        <div class="qr-hint">Escaneie com o app do seu banco para pagar via PIX</div>
+                        <div style="margin-top:10px; font-size:11px; color:rgba(148,183,255,0.4); font-family:'JetBrains Mono',monospace;">Escaneie com o app do seu banco para pagar via PIX</div>
                     </div>
 
-                    <div class="info-grid">
-                        <div class="info-card">
-                            <div class="info-card-label">💰 Valor</div>
-                            <div class="info-card-value accent">R$ ${valorFormatado}</div>
+                    <div style="text-align:center; margin-bottom:16px;">
+                        <div style="display:inline-flex; align-items:center; gap:10px; padding:12px 20px; background:rgba(0,212,255,0.06); border:1px solid rgba(0,212,255,0.2); border-radius:12px;">
+                            <div>
+                                <div style="font-size:11px; color:rgba(148,183,255,0.5); text-transform:uppercase; letter-spacing:0.06em; font-weight:500; margin-bottom:3px;">Valor a pagar</div>
+                                <div style="font-size:28px; font-weight:800; color:var(--accent); font-family:'JetBrains Mono',monospace; letter-spacing:-0.02em;">R$ ${valorFormatado}</div>
+                            </div>
                         </div>
-                        <div class="info-card">
-                            <div class="info-card-label">🌐 Rede</div>
-                            <div class="info-card-value" style="font-size:13px; color: var(--blue-300);">Liquid Network</div>
-                        </div>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:10px; padding:11px 14px; background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.18); border-radius:10px; margin-bottom:16px; font-size:12px; color:rgba(148,183,255,0.7); line-height:1.5;">
+                        <span style="font-size:18px; flex-shrink:0;">🔷</span>
+                        <span>Você está adquirindo <b style="color:var(--accent);">token DePIX</b> — uma representação digital do Real lastreada 1:1 na rede Liquid. O pagamento é feito via PIX e convertido automaticamente.</span>
                     </div>
 
                     <div class="divider"></div>
@@ -902,7 +905,7 @@
                         </button>
                     </div>
 
-                    <div id="timerBlock" style="padding:14px 16px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:12px; margin-bottom:14px;">
+                    <div id="timerBlock" style="padding:14px 16px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:12px; margin-bottom:14px; margin-top:16px;">
                         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
                             <span style="font-size:12px; color:rgba(253,230,138,0.7); font-weight:500;">⏱️ Tempo restante para pagar</span>
                             <span id="timerValue" style="font-size:20px; font-weight:700; color:#fde68a; font-family:'JetBrains Mono',monospace;">20:00</span>
