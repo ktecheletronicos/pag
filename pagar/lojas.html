@@ -644,6 +644,21 @@
             50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(0, 212, 255, 0); }
         }
 
+        .checking-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse 1.5s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         @media (max-width: 480px) {
             .content { padding: 24px 20px 28px; }
             .card-header { padding: 24px 20px 20px; }
@@ -658,10 +673,14 @@
 <div class="page-wrapper">
 
     <div class="brand-badge" id="brandBadge">
-        <img class="brand-logo" id="brandLogo" src="" alt="Logo">
-        <span class="brand-name" id="brandUserName">PixPay</span>
-        <span class="brand-dot"></span>
-        <span class="brand-name" style="color: rgba(148,183,255,0.4)">DePIX</span>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <img class="brand-logo" id="brandLogo" src="" alt="Logo" style="width:52px; height:52px; border-radius:12px; object-fit:contain; display:none;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span class="brand-name" id="brandUserName">PixPay</span>
+                <span class="brand-dot"></span>
+                <span class="brand-name" style="color: rgba(148,183,255,0.4)">DePIX</span>
+            </div>
+        </div>
     </div>
 
     <div class="container">
@@ -723,7 +742,7 @@
     </div>
 
     <div class="footer-note">
-        🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026
+        🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v1.1
     </div>
 
 </div>
@@ -764,10 +783,9 @@
         const img = document.getElementById('brandLogo');
         img.src = url;
         img.style.display = 'block';
-
         // Atualiza o favicon dinamicamente
         const favicon = document.getElementById('faviconLink');
-        favicon.href = url;
+        if (favicon) favicon.href = url;
     }
 
     function aplicarNomeUsuario(nome) {
@@ -851,13 +869,6 @@
 
         respostaDiv.innerHTML = `
             <div class="result-container">
-                <div class="result-header">
-                    <span style="font-size:20px">📋</span>
-                    <div>
-                        <div class="result-header-title">Instrução de Transferência</div>
-                        <div class="result-header-sub">👤 ${nomeUsuario} · 🆔 ${r.id.substring(0, 16)}...</div>
-                    </div>
-                </div>
                 <div class="result-body">
 
                     <div style="text-align:center; margin-bottom:20px;">
@@ -895,15 +906,7 @@
 
                     <div class="address-block">
                         <div class="address-label">🏦 Endereço DePIX (Liquid)</div>
-                        <div class="address-row">
-                            <input type="text" value="${depositDepixAddress}" readonly>
-                            <button class="copy-btn" onclick="
-                                navigator.clipboard.writeText('${enderecoEscaped}').then(()=>{
-                                    this.textContent='✓ Copiado';
-                                    setTimeout(()=>{ this.textContent='Copiar' }, 2000);
-                                })
-                            ">Copiar</button>
-                        </div>
+                        <div style="padding:14px 16px; background:rgba(255,255,255,0.04); border:1px solid rgba(59,130,246,0.2); border-radius:10px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--blue-200); word-break:break-all; line-height:1.7;">${depositDepixAddress}</div>
                         <div style="margin-top:10px; padding:12px 14px; background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); border-radius:10px; font-size:12px; color:rgba(148,183,255,0.7); line-height:1.6;">
                             ℹ️ Este é o endereço Liquid associado à sua transferência. O pagamento deve ser feito via PIX no QR Code acima.
                         </div>
@@ -913,6 +916,53 @@
                         <span>🆔 <b>ID da Operação:</b> <span style="font-family:'JetBrains Mono',monospace;font-size:11px">${r.id}</span></span>
                     </div>
 
+                    <div id="checkingStatus" style="display:flex; align-items:center; gap:8px; padding:12px 14px; background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); border-radius:10px; font-size:12px; color:rgba(148,183,255,0.7);">
+                        <div class="checking-dot"></div>
+                        <span>Verificando pagamento automaticamente...</span>
+                    </div>
+
+                </div>
+            </div>
+        `;
+
+        iniciarVerificacaoPagamento(r.id);
+    }
+
+    let checkInterval = null;
+
+    function iniciarVerificacaoPagamento(id) {
+        if (checkInterval) clearInterval(checkInterval);
+
+        async function verificar() {
+            try {
+                const res = await fetch(`https://webhookn8n.ktecheletronicos.com.br/webhook/consultar_pag_depix?id=${id}`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const status = data.response && data.response.status;
+                const payerName = data.response && data.response.payerName;
+
+                if (status === 'depix_sent') {
+                    clearInterval(checkInterval);
+                    mostrarSucesso(payerName);
+                }
+            } catch (e) {
+                console.error('Erro ao verificar pagamento:', e);
+            }
+        }
+
+        verificar();
+        checkInterval = setInterval(verificar, 10000);
+    }
+
+    function mostrarSucesso(payerName) {
+        const respostaDiv = document.getElementById('resposta');
+        respostaDiv.innerHTML = `
+            <div style="text-align:center; padding:40px 20px; animation: fadeSlideUp 0.5s ease forwards;">
+                <div style="font-size:72px; margin-bottom:20px; display:block; animation: bounceIn 0.6s ease forwards;">✅</div>
+                <h2 style="font-size:22px; font-weight:700; color:var(--success); margin-bottom:16px;">Pagamento Confirmado!</h2>
+                <div style="font-size:14px; color:rgba(148,183,255,0.7); line-height:1.7;">
+                    ${payerName ? `Olá, <strong style="color:var(--white)">${payerName}</strong>!<br><br>` : ''}
+                    Sua transferência foi confirmada com sucesso! 🎉
                 </div>
             </div>
         `;
