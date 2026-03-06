@@ -619,6 +619,59 @@
     .copy-label { display: none; }
     .copy-icon { display: inline !important; }
   }
+
+  /* Value preview */
+  .valor-preview {
+    margin-top: 14px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.3s ease;
+    opacity: 0;
+  }
+  .valor-preview.visible {
+    max-height: 160px;
+    opacity: 1;
+  }
+  .valor-preview-inner {
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(59, 130, 246, 0.04));
+    border: 1px solid rgba(0, 212, 255, 0.18);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .valor-preview-inner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--blue-400), transparent);
+  }
+  .preview-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(0, 212, 255, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+  .preview-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .preview-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  .preview-row-label { color: rgba(148, 183, 255, 0.6); font-weight: 400; }
+  .preview-row-value { font-family: 'Sora', sans-serif; font-weight: 600; color: var(--white); }
+  .preview-row-value.taxa { color: #fbbf24; }
+  .preview-divider { height: 1px; background: rgba(59, 130, 246, 0.15); margin: 4px 0; }
+  .preview-row-value.deposito { font-size: 16px; color: var(--accent); font-weight: 700; }
+  .preview-row-label.deposito { font-weight: 600; color: var(--blue-200); font-size: 13px; }
 </style>
 </head>
 
@@ -687,6 +740,27 @@
             <span id="btnArrow">→</span>
           </span>
         </button>
+
+        <div class="valor-preview" id="valorPreview">
+          <div class="valor-preview-inner">
+            <div class="preview-label">⚡ Simulação do saque</div>
+            <div class="preview-rows">
+              <div class="preview-row">
+                <span class="preview-row-label">Você receberá via PIX</span>
+                <span class="preview-row-value" id="previewReceber">—</span>
+              </div>
+              <div class="preview-row">
+                <span class="preview-row-label">Taxa (1%)</span>
+                <span class="preview-row-value taxa" id="previewTaxa">—</span>
+              </div>
+              <div class="preview-divider"></div>
+              <div class="preview-row">
+                <span class="preview-row-label deposito">💳 Depositar na Liquid</span>
+                <span class="preview-row-value deposito" id="previewDepositar">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
     </form>
 
     <div id="resposta" class="resultado"></div>
@@ -694,7 +768,7 @@
   </div>
 
   <div class="footer-note">
-    🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v1.9
+    🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v2.0.1
   </div>
 
 </div>
@@ -759,6 +833,35 @@ pixKeyInput.addEventListener('paste', (e) => {
 
 tipoChaveSelect.addEventListener('change', () => {
     pixKeyInput.value = '';
+});
+
+// Preview de valor em tempo real
+const valorInput = document.getElementById('valor');
+const valorPreview = document.getElementById('valorPreview');
+
+function formatBRL(num) {
+  return 'R$ ' + num.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+valorInput.addEventListener('input', () => {
+  const val = parseFloat(valorInput.value);
+  if (!val || val < 2 || val > 6000) {
+    valorPreview.classList.remove('visible');
+    return;
+  }
+  // Taxa: mínimo R$1,00 fixo abaixo de R$100; acima disso 1% sobre o depósito (depositar = receber / 0.99)
+  let depositar, taxa;
+  if (val < 100) {
+    taxa = 1.00;
+    depositar = val + taxa;
+  } else {
+    depositar = Math.ceil(val / 0.99 * 100) / 100;
+    taxa = depositar - val;
+  }
+  document.getElementById('previewReceber').textContent = formatBRL(val);
+  document.getElementById('previewTaxa').textContent = '+ ' + formatBRL(taxa);
+  document.getElementById('previewDepositar').textContent = formatBRL(depositar);
+  valorPreview.classList.add('visible');
 });
 
 function traduzirStatus(status) {
