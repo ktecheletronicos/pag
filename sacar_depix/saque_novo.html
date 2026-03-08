@@ -750,7 +750,7 @@
   </div>
 
   <div class="footer-note">
-    🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v2.0.2
+    🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v2.0.3
   </div>
 
 </div>
@@ -760,7 +760,7 @@
 // ─── CÁLCULO DE TAXAS (centralizado) ───────────────────────────────────────
 // Regras:
 //   Taxa base (API): até R$100 = R$1,00 fixo | acima de R$100 = 1% sobre payout
-//   Taxa de serviço: 0,5% sobre payout, mínimo R$0,50
+//   Taxa de serviço: 0,7% sobre payout, mínimo R$0,99
 function calcularTaxas(payoutReais) {
   const payoutCents = Math.round(payoutReais * 100);
 
@@ -772,8 +772,8 @@ function calcularTaxas(payoutReais) {
     taxaBaseCents = payoutCents * 0.01; // 1%
   }
 
-  // Taxa de serviço: 0,5% com mínimo de R$0,50
-  const taxaServicoCents = Math.max(payoutCents * 0.005, 50);
+  // Taxa de serviço: 0,7% com mínimo de R$0,99
+  const taxaServicoCents = Math.max(payoutCents * 0.007, 99);
 
   const totalTaxasCents = taxaBaseCents + taxaServicoCents;
   const depositoCents   = Math.round(payoutCents + totalTaxasCents);
@@ -862,9 +862,9 @@ valorInput.addEventListener('input', () => {
   const t = calcularTaxas(val);
 
   // Texto dinâmico da taxa de serviço: mostra se foi mínimo ou percentual
-  const taxaServicoLabel = t.taxaServico === 0.50
+  const taxaServicoLabel = t.taxaServico === 0.99
     ? '+ ' + formatBRL(t.taxaServico) + ' <span style="opacity:0.5;font-size:11px">(mín.)</span>'
-    : '+ ' + formatBRL(t.taxaServico) + ' <span style="opacity:0.5;font-size:11px">(0,5%)</span>';
+    : '+ ' + formatBRL(t.taxaServico) + ' <span style="opacity:0.5;font-size:11px">(0,7%)</span>';
 
   document.getElementById('previewReceber').textContent        = formatBRL(val);
   document.getElementById('previewTaxaBase').innerHTML         = '+ ' + formatBRL(t.taxaBase);
@@ -1120,7 +1120,7 @@ function renderizarPagamento(r, tipoChave) {
             <b>R$ ${taxaBaseStr}</b>
           </div>
           <div style="display:flex; justify-content:space-between;">
-            <span>⚙️ Taxa de serviço <span style="opacity:0.6; font-size:11px">(0,5% · mín. R$0,50)</span></span>
+            <span>⚙️ Taxa de serviço <span style="opacity:0.6; font-size:11px">(0,7% · mín. R$0,99)</span></span>
             <b>R$ ${taxaServicoStr}</b>
           </div>
           <div style="height:1px; background:rgba(251,191,36,0.2); margin:2px 0;"></div>
