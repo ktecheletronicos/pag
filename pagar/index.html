@@ -844,7 +844,7 @@
     </div>
 
     <div class="footer-note">
-        🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.1
+        🔒 Seus dados são protegidos por criptografia ponta a ponta · KTech Eletrônicos © 2026 v1.2
     </div>
 
 </div>
@@ -856,6 +856,18 @@
     let transactionId = null;
 
     const amountInput = document.getElementById('amountInput');
+
+    // Auto-preenche o campo valor se a URL contiver ?valor=X
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const valor = params.get('valor');
+        if (valor) {
+            const num = parseFloat(String(valor).replace(',', '.'));
+            if (!isNaN(num) && num > 0) {
+                amountInput.value = num.toFixed(2).replace('.', ',');
+            }
+        }
+    })();
 
     amountInput.addEventListener('input', function(e) {
         let value = e.target.value;
