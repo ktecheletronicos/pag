@@ -772,7 +772,7 @@
   </div>
 
   <div class="footer-note">
-    🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v2.0.1
+    🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v2.0.2
   </div>
 
 </div>
@@ -782,6 +782,8 @@
 // =============================
 const taxIdGroup = document.getElementById('taxIdGroup');
 const taxNumberInput = document.getElementById('taxNumber');
+const pixKeyInput = document.getElementById('pixKey');
+const tipoChaveSelect = document.getElementById('tipoChave');	
 
 // =============================
 // MOSTRAR / OCULTAR CAMPO
@@ -825,9 +827,6 @@ taxNumberInput.addEventListener('input', (e) => {
 });
 
 
-// Máscaras automáticas
-const pixKeyInput = document.getElementById('pixKey');
-const tipoChaveSelect = document.getElementById('tipoChave');
 
 pixKeyInput.addEventListener('input', (e) => {
     const tipo = tipoChaveSelect.value;
