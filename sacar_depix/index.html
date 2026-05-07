@@ -732,6 +732,10 @@
           <label><span class="label-icon">🔑</span> Chave PIX de destino</label>
           <input type="text" id="pixKey" placeholder="Informe sua chave PIX">
         </div>
+      <div class="form-group" id="taxIdGroup" style="display:none;">
+  <label><span class="label-icon">🧾</span> CPF ou CNPJ do favorecido</label>
+  <input type="text" id="taxNumber" placeholder="Digite o CPF ou CNPJ">
+</div>
 
         <button type="submit" class="btn-submit" id="btnEnviar">
           <span class="btn-inner">
@@ -768,16 +772,61 @@
   </div>
 
   <div class="footer-note">
-    🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v2.0.1
+    🔒 Seus dados são protegidos por criptografia ponta a ponta · PixPay © 2026 v2.0.4
   </div>
 
 </div>
 
 <script>
-
-// Máscaras automáticas
+  // NOVOS ELEMENTOS
+// =============================
+const taxIdGroup = document.getElementById('taxIdGroup');
+const taxNumberInput = document.getElementById('taxNumber');
 const pixKeyInput = document.getElementById('pixKey');
-const tipoChaveSelect = document.getElementById('tipoChave');
+const tipoChaveSelect = document.getElementById('tipoChave');	
+
+// =============================
+// MOSTRAR / OCULTAR CAMPO
+// =============================
+function toggleTaxField() {
+  const tipo = tipoChaveSelect.value;
+
+  if (tipo === 'CPF' || tipo === 'CNPJ') {
+    taxIdGroup.style.display = 'none';
+    taxNumberInput.value = '';
+  } else {
+    taxIdGroup.style.display = 'block';
+  }
+}
+
+tipoChaveSelect.addEventListener('change', () => {
+  pixKeyInput.value = '';
+  toggleTaxField();
+});
+
+toggleTaxField();
+
+// =============================
+// MÁSCARA CPF/CNPJ NO TAXNUMBER
+// =============================
+taxNumberInput.addEventListener('input', (e) => {
+  let value = e.target.value.replace(/\D/g, '');
+
+  if (value.length <= 11) {
+    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    e.target.value = value.substring(0, 14);
+  } else {
+    value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+    value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+    value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+    value = value.replace(/(\d{4})(\d)/, '$1-$2');
+    e.target.value = value.substring(0, 18);
+  }
+});
+
+
 
 pixKeyInput.addEventListener('input', (e) => {
     const tipo = tipoChaveSelect.value;
@@ -937,6 +986,7 @@ function validarChavePix(chave, tipo) {
 }
 
 async function enviar() {
+
   if (isProcessing) return;
 
   const btn = document.getElementById("btnEnviar");
@@ -969,6 +1019,32 @@ async function enviar() {
     return;
   }
 
+  // =============================
+  // NOVA LÓGICA TAX NUMBER
+  // =============================
+  let taxNumberFinal = '';
+
+  if (tipoChave === 'CPF' || tipoChave === 'CNPJ') {
+    taxNumberFinal = pixKey;
+  } else {
+    const taxNumber = taxNumberInput.value.trim();
+
+    if (!taxNumber) {
+      alert("❌ Informe o CPF ou CNPJ do favorecido.");
+      return;
+    }
+
+    const tipoDoc = taxNumber.replace(/\D/g, '').length <= 11 ? 'CPF' : 'CNPJ';
+    const erroDoc = validarChavePix(taxNumber, tipoDoc);
+
+    if (erroDoc) {
+      alert("❌ Documento inválido\n\n" + erroDoc);
+      return;
+    }
+
+    taxNumberFinal = taxNumber;
+  }
+
   const confirmado = confirm(
     "⚠️ Confirme sua chave PIX antes de prosseguir:\n\n" +
     "Tipo: " + tipoChave + "\n" +
@@ -997,7 +1073,8 @@ async function enviar() {
         senha: senha,
         valor: valorInput,
         pixKey: tipoChave === 'TELEFONE' ? pixKey.replace(/\D/g, '') : pixKey,
-        tipoChave: tipoChave
+        tipoChave: tipoChave,
+        taxNumber: taxNumberFinal // 🔥 NOVO CAMPO
       })
     });
 
@@ -1014,7 +1091,6 @@ async function enviar() {
     }
 
     document.getElementById("withdrawalForm").style.display = "none";
-	
     renderizarPagamento(r, tipoChave);
 
   } catch (error) {
